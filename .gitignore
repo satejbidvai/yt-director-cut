@@ -1,0 +1,11 @@
+node_modules/
+dist/
+.vite/
+
+# Editor / OS noise
+.DS_Store
+*.log
+.idea/
+.vscode/
+*.swp
+*.swo
