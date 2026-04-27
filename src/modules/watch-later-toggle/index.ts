@@ -1,4 +1,4 @@
-import type { FeatureModule } from "../../framework/types";
+import type { FeatureModule } from '../../framework/types';
 import {
   findActionRow,
   findAddToPlaylistPanel,
@@ -6,24 +6,25 @@ import {
   findNativeSaveButton,
   findPanelCloseButton,
   findWatchLaterRow,
-} from "./selectors";
-import { waitFor, waitForGone } from "./dom-utils";
+  warnOnceMiss,
+} from './selectors';
+import { waitFor, waitForGone } from './dom-utils';
 
-const BUTTON_ID = "productive-yt-watch-later-button";
-const BUTTON_LABEL = "📑 Watch Later";
+const BUTTON_ID = 'productive-yt-watch-later-button';
+const BUTTON_LABEL = 'Watch Later';
 
 export const watchLaterToggleModule: FeatureModule = {
-  id: "watch-later-toggle",
-  name: "Watch Later toggle",
+  id: 'watch-later-toggle',
+  name: 'Watch Later toggle',
   description:
-    "Adds a one-click button next to the native Save button that toggles the current video in your Watch Later playlist.",
+    'Adds a one-click button next to the native Save button that toggles the current video in your Watch Later playlist.',
   enable(ctx) {
     let cancelled = false;
 
     const handleNavigation = (url: URL) => {
       removeInjectedButton();
       if (cancelled) return;
-      if (url.pathname !== "/watch") return;
+      if (url.pathname !== '/watch') return;
       void injectButton();
     };
 
@@ -33,7 +34,7 @@ export const watchLaterToggleModule: FeatureModule = {
       cancelled = true;
       removeInjectedButton();
     };
-  },
+  }
 };
 
 function removeInjectedButton(): void {
@@ -45,21 +46,18 @@ async function injectButton(): Promise<void> {
   try {
     actionRow = await waitFor<Element>(document, () => findActionRow(), 5000);
   } catch {
-    // Selector miss already warned by findActionRow; render nothing.
+    warnOnceMiss("action-row", "not found within timeout");
     return;
   }
 
-  // Idempotency: another navigation event may have raced ahead and injected.
   if (document.getElementById(BUTTON_ID)) return;
 
+  const nativeSave = findNativeSaveButton(actionRow);
+  if (!nativeSave) warnOnceMiss("native-save", "no button[aria-label^=Save] in action row");
+
   const button = buildButton();
-  // Prefer to land next to the native Save button so the pill sits inline
-  // with Like / Dislike / Share / Save. Fall back to the action row itself.
-  const nativeSave = findNativeSaveButton();
   const anchor =
-    nativeSave?.closest("ytd-button-renderer") ??
-    nativeSave?.closest("yt-button-view-model") ??
-    nativeSave;
+    nativeSave?.closest('ytd-button-renderer') ?? nativeSave?.closest('yt-button-view-model') ?? nativeSave;
 
   if (anchor && anchor.parentElement) {
     anchor.parentElement.insertBefore(button, anchor.nextSibling);
@@ -69,11 +67,11 @@ async function injectButton(): Promise<void> {
 }
 
 function buildButton(): HTMLButtonElement {
-  const btn = document.createElement("button");
+  const btn = document.createElement('button');
   btn.id = BUTTON_ID;
-  btn.type = "button";
+  btn.type = 'button';
   btn.textContent = BUTTON_LABEL;
-  btn.setAttribute("aria-label", "Toggle Watch Later for this video");
+  btn.setAttribute('aria-label', 'Toggle Watch Later for this video');
   // Hand-rolled styling that reads as a native YouTube pill in both light and
   // dark themes. We intentionally do NOT clone YouTube's web component (per
   // design open question O1, authoring is more durable than cloning a custom
@@ -88,12 +86,12 @@ function buildButton(): HTMLButtonElement {
     borderRadius: "18px",
     background: "var(--yt-spec-badge-chip-background, rgba(255,255,255,0.1))",
     color: "var(--yt-spec-text-primary, inherit)",
-    font: "500 14px/36px 'YouTube Sans','Roboto',sans-serif",
+    font: "500 14px/36px Roboto, Arial, sans-serif",
     cursor: "pointer",
     whiteSpace: "nowrap",
   } satisfies Partial<CSSStyleDeclaration>);
 
-  btn.addEventListener("click", (ev) => {
+  btn.addEventListener('click', (ev) => {
     ev.preventDefault();
     ev.stopPropagation();
     btn.disabled = true;
@@ -117,12 +115,13 @@ function buildButton(): HTMLButtonElement {
  * miss can never strand the panel.
  */
 async function toggleWatchLater(): Promise<void> {
-  const saveButton = findNativeSaveButton();
+  const actionRow = findActionRow();
+  const saveButton = actionRow ? findNativeSaveButton(actionRow) : null;
   if (!saveButton) return;
 
-  const popupContainer = document.querySelector<HTMLElement>("ytd-popup-container");
-  const previousVisibility = popupContainer?.style.visibility ?? "";
-  if (popupContainer) popupContainer.style.visibility = "hidden";
+  const popupContainer = document.querySelector<HTMLElement>('ytd-popup-container');
+  const previousVisibility = popupContainer?.style.visibility ?? '';
+  if (popupContainer) popupContainer.style.visibility = 'hidden';
 
   try {
     saveButton.click();
@@ -132,28 +131,29 @@ async function toggleWatchLater(): Promise<void> {
       panel = await waitFor<HTMLElement>(
         (popupContainer ?? document) as ParentNode,
         () => findAddToPlaylistPanel(),
-        4000,
+        4000
       );
     } catch {
+      warnOnceMiss("popup-panel", "playlist panel did not appear after Save click");
       return;
     }
 
     const watchLaterRow = findWatchLaterRow(panel);
-    if (!watchLaterRow) return;
+    if (!watchLaterRow) {
+      warnOnceMiss("watch-later-row", "no row with aria-label^=Watch later in panel");
+      return;
+    }
 
     const checkbox = findCheckboxInRow(watchLaterRow) ?? watchLaterRow;
     checkbox.click();
 
-    // Give YouTube a beat to register the toggle before we tear the panel
-    // down — clicking close too quickly can cancel the underlying request.
     await new Promise((r) => setTimeout(r, 120));
 
     const closeBtn = findPanelCloseButton(panel);
     if (closeBtn) {
       closeBtn.click();
     } else {
-      // Fall back to ESC, which YouTube's panel listens for.
-      document.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape" }));
+      document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }));
     }
 
     await waitForGone(document, () => findAddToPlaylistPanel(), 1500);
