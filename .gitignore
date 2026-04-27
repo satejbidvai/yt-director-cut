@@ -7,6 +7,9 @@ dist/
 .cursor/
 .opencode/
 
+# OpenSpec tracking artifacts (not source)
+openspec/
+
 # Editor / OS noise
 .DS_Store
 *.log
