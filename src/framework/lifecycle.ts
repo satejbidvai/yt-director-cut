@@ -1,6 +1,26 @@
-import type { FeatureModule, ModuleContext } from "./types";
-import { subscribe, unsubscribe } from "./navigation";
-import { getAllToggles, subscribeToToggleChanges } from "./storage";
+import type { FeatureModule, ModuleContext } from './types';
+import { subscribe, unsubscribe } from './navigation';
+import { getAllToggles, subscribeToToggleChanges } from './storage';
+
+function buildContext(): { ctx: ModuleContext; teardown: () => void } {
+  const ownedHandlers: ((url: URL) => void)[] = [];
+  const ctx: ModuleContext = {
+    onNavigate(handler) {
+      ownedHandlers.push(handler);
+      subscribe(handler);
+      // Fire once with the current URL so modules don't need a "first run" path.
+      try {
+        handler(new URL(location.href));
+      } catch (err) {
+        console.warn('[productive-yt] onNavigate first-run threw:', err);
+      }
+    }
+  };
+  const teardown = () => {
+    for (const h of ownedHandlers) unsubscribe(h);
+  };
+  return { ctx, teardown };
+}
 
 /**
  * Bootstrap a set of feature modules:
@@ -15,26 +35,6 @@ import { getAllToggles, subscribeToToggleChanges } from "./storage";
 export async function bootstrap(modules: FeatureModule[]): Promise<void> {
   const cleanups = new Map<string, () => void>();
   const moduleById = new Map(modules.map((m) => [m.id, m] as const));
-
-  function buildContext(): { ctx: ModuleContext; teardown: () => void } {
-    const ownedHandlers: ((url: URL) => void)[] = [];
-    const ctx: ModuleContext = {
-      onNavigate(handler) {
-        ownedHandlers.push(handler);
-        subscribe(handler);
-        // Fire once with the current URL so modules don't need a "first run" path.
-        try {
-          handler(new URL(location.href));
-        } catch (err) {
-          console.warn("[productive-yt] onNavigate first-run threw:", err);
-        }
-      },
-    };
-    const teardown = () => {
-      for (const h of ownedHandlers) unsubscribe(h);
-    };
-    return { ctx, teardown };
-  }
 
   function enableModule(mod: FeatureModule): void {
     if (cleanups.has(mod.id)) return;

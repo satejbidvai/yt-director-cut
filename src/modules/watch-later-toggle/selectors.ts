@@ -9,7 +9,7 @@
  * Every miss fires a single `console.warn` per session via `findOrWarn`.
  */
 
-const TAG = "[productive-yt:watch-later-toggle]";
+const TAG = '[productive-yt:watch-later-toggle]';
 
 /** Warn once per key per session. Callers use this after a confirmed miss. */
 const warnedKeys = new Set<string>();
@@ -19,10 +19,7 @@ export function warnOnceMiss(key: string, detail: string): void {
   console.warn(TAG, `selector miss key="${key}"`, detail);
 }
 
-export function findAll<T extends Element = Element>(
-  root: ParentNode,
-  selector: string,
-): T[] {
+function findAll<T extends Element = Element>(root: ParentNode, selector: string): T[] {
   return Array.from(root.querySelectorAll<T>(selector));
 }
 
@@ -30,7 +27,7 @@ export function findAll<T extends Element = Element>(
 
 // The action row: the ytd-menu-renderer inside the watch-page metadata that
 // contains Like / Share / Save / etc.
-const ACTION_ROW_SELECTOR = "ytd-watch-metadata ytd-menu-renderer";
+const ACTION_ROW_SELECTOR = 'ytd-watch-metadata ytd-menu-renderer';
 
 export function findActionRow(root: ParentNode = document): Element | null {
   return root.querySelector(ACTION_ROW_SELECTOR);
@@ -38,15 +35,15 @@ export function findActionRow(root: ParentNode = document): Element | null {
 
 // The native "Save" button inside the action row.
 export function findNativeSaveButton(root: ParentNode = document): HTMLElement | null {
-  const candidates = findAll<HTMLElement>(root, "button[aria-label]");
-  return candidates.find((b) => /^save\b/i.test(b.getAttribute("aria-label") ?? "")) ?? null;
+  const candidates = findAll<HTMLElement>(root, 'button[aria-label]');
+  return candidates.find((b) => /^save\b/i.test(b.getAttribute('aria-label') ?? '')) ?? null;
 }
 
 // The popup container that hosts the "Save to playlist" panel after Save is
 // clicked.  YouTube renders this inside `ytd-popup-container` at the end of
 // <body>.  The panel itself is now a `yt-sheet-view-model` inside a
 // `tp-yt-iron-dropdown`.
-export const POPUP_CONTAINER = "ytd-popup-container";
+export const POPUP_CONTAINER = 'ytd-popup-container';
 
 export function findAddToPlaylistPanel(): HTMLElement | null {
   return document.querySelector<HTMLElement>(`${POPUP_CONTAINER} yt-sheet-view-model`);
@@ -55,15 +52,13 @@ export function findAddToPlaylistPanel(): HTMLElement | null {
 // The "Watch later" row inside the playlist panel — a list item whose
 // aria-label starts with "Watch later" (case-insensitive).
 export function findWatchLaterRow(panel: ParentNode): HTMLElement | null {
-  const rows = findAll<HTMLElement>(panel, "yt-list-item-view-model[aria-label]");
-  return rows.find((r) =>
-    /^\s*watch later\b/i.test(r.getAttribute("aria-label") ?? ""),
-  ) ?? null;
+  const rows = findAll<HTMLElement>(panel, 'yt-list-item-view-model[aria-label]');
+  return rows.find((r) => /^\s*watch later\b/i.test(r.getAttribute('aria-label') ?? '')) ?? null;
 }
 
 // The clickable surface inside a Watch Later row.
 export function findCheckboxInRow(row: HTMLElement): HTMLElement {
-  return row.querySelector<HTMLElement>("button") ?? row;
+  return row.querySelector<HTMLElement>('button') ?? row;
 }
 
 // --- Overflow menu selectors (Save collapsed into three-dot menu) ---
@@ -77,8 +72,7 @@ export function findOverflowButton(root: ParentNode = document): HTMLElement | n
 }
 
 // The dropdown popup that appears after clicking the three-dot button.
-const OVERFLOW_DROPDOWN_SELECTOR =
-  `${POPUP_CONTAINER} tp-yt-iron-dropdown ytd-menu-popup-renderer`;
+const OVERFLOW_DROPDOWN_SELECTOR = `${POPUP_CONTAINER} tp-yt-iron-dropdown ytd-menu-popup-renderer`;
 
 export function findOverflowDropdown(): HTMLElement | null {
   return document.querySelector<HTMLElement>(OVERFLOW_DROPDOWN_SELECTOR);
@@ -87,11 +81,13 @@ export function findOverflowDropdown(): HTMLElement | null {
 // The "Save" menu item inside the overflow dropdown, identified by its
 // yt-formatted-string text content (no aria-label or <button> exists here).
 export function findOverflowSaveItem(dropdown: ParentNode): HTMLElement | null {
-  const items = findAll<HTMLElement>(dropdown, "ytd-menu-service-item-renderer");
-  return items.find((item) => {
-    const label = item.querySelector("yt-formatted-string");
-    return label && /^\s*save\s*$/i.test(label.textContent ?? "");
-  }) ?? null;
+  const items = findAll<HTMLElement>(dropdown, 'ytd-menu-service-item-renderer');
+  return (
+    items.find((item) => {
+      const label = item.querySelector('yt-formatted-string');
+      return label && /^\s*save\s*$/i.test(label.textContent ?? '');
+    }) ?? null
+  );
 }
 
 // The close affordance on the playlist panel.  The new panel is a dropdown
@@ -100,6 +96,6 @@ export function findOverflowSaveItem(dropdown: ParentNode): HTMLElement | null {
 export function findPanelCloseButton(panel: ParentNode): HTMLElement | null {
   return (
     panel.querySelector<HTMLElement>("button[aria-label='Close']") ??
-    panel.querySelector<HTMLElement>("#close-button button")
+    panel.querySelector<HTMLElement>('#close-button button')
   );
 }

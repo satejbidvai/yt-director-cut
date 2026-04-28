@@ -1,11 +1,11 @@
-export const FEATURE_TOGGLES_KEY = "featureToggles";
+const FEATURE_TOGGLES_KEY = 'featureToggles';
 
-export type FeatureToggles = Record<string, boolean>;
+type FeatureToggles = Record<string, boolean>;
 
 async function readToggles(): Promise<FeatureToggles> {
   const result = await chrome.storage.sync.get(FEATURE_TOGGLES_KEY);
   const value = result[FEATURE_TOGGLES_KEY];
-  return value && typeof value === "object" ? (value as FeatureToggles) : {};
+  return value && typeof value === 'object' ? (value as FeatureToggles) : {};
 }
 
 export async function getAllToggles(): Promise<FeatureToggles> {
@@ -18,14 +18,11 @@ export async function setEnabled(moduleId: string, value: boolean): Promise<void
   await chrome.storage.sync.set({ [FEATURE_TOGGLES_KEY]: toggles });
 }
 
-export type ToggleChangeHandler = (moduleId: string, nextEnabled: boolean) => void;
+type ToggleChangeHandler = (moduleId: string, nextEnabled: boolean) => void;
 
 export function subscribeToToggleChanges(handler: ToggleChangeHandler): () => void {
-  const listener = (
-    changes: { [key: string]: chrome.storage.StorageChange },
-    areaName: string,
-  ) => {
-    if (areaName !== "sync") return;
+  const listener = (changes: { [key: string]: chrome.storage.StorageChange }, areaName: string) => {
+    if (areaName !== 'sync') return;
     const change = changes[FEATURE_TOGGLES_KEY];
     if (!change) return;
     const oldVal = (change.oldValue ?? {}) as FeatureToggles;
