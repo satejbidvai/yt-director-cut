@@ -1,4 +1,6 @@
 import type { FeatureModule } from '../../framework/types';
+import { yt, pill } from '../../framework/styles';
+import { injectStyles } from '../../framework/style-injection';
 import {
   findActionRow,
   findAddToPlaylistPanel,
@@ -24,6 +26,16 @@ export const watchLaterToggleModule: FeatureModule = {
   enable(ctx) {
     let cancelled = false;
 
+    const disposeStyles = injectStyles(`
+      #${BUTTON_ID}:hover:not(:disabled) {
+        background: ${yt.chipBgHover};
+      }
+      #${BUTTON_ID}:disabled {
+        opacity: 0.5;
+        cursor: default;
+      }
+    `);
+
     const handleNavigation = (url: URL) => {
       removeInjectedButton();
       if (cancelled) return;
@@ -36,6 +48,7 @@ export const watchLaterToggleModule: FeatureModule = {
     return () => {
       cancelled = true;
       removeInjectedButton();
+      disposeStyles();
     };
   }
 };
@@ -125,14 +138,14 @@ function buildButton(): HTMLButtonElement {
   Object.assign(btn.style, {
     display: "inline-flex",
     alignItems: "center",
-    height: "36px",
-    padding: "0 16px",
+    height: pill.height,
+    padding: `0 ${pill.paddingX}`,
     marginLeft: "8px",
     border: "none",
-    borderRadius: "18px",
-    background: "var(--yt-spec-badge-chip-background, rgba(255,255,255,0.1))",
-    color: "var(--yt-spec-text-primary, inherit)",
-    font: "500 14px/36px Roboto, Arial, sans-serif",
+    borderRadius: pill.borderRadius,
+    background: yt.chipBg,
+    color: yt.textPrimary,
+    font: pill.font,
     cursor: "pointer",
     whiteSpace: "nowrap",
   } satisfies Partial<CSSStyleDeclaration>);

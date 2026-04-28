@@ -56,6 +56,8 @@ src/
                                ctx, reacts to toggle changes via storage listener.
     navigation.ts            — Single yt-navigate-finish dispatcher.
     storage.ts               — chrome.storage.sync helpers for featureToggles.
+    styles.ts                — YouTube CSS variable tokens (yt.*) and pill sizing.
+    style-injection.ts       — injectStyles(css) → dispose fn; one shared <style>.
   modules/
     watch-later-toggle/
       index.ts               — FeatureModule: injection, click choreography.
@@ -117,6 +119,29 @@ Load `dist/` as an unpacked extension in `chrome://extensions`.
   one click correctly adds or removes regardless of prior state.
 - **Selector misses are silent in UI.** On failure, `warnOnceMiss()` logs a
   `console.warn` once per session and the module renders nothing.
+
+## Styling
+
+Two injection patterns, two strategies:
+
+- **Embedded UI** (e.g. buttons inside YouTube's action row): inline styles
+  composed from shared tokens in `framework/styles.ts`. Shadow DOM is not used
+  here — it would break YouTube's flex layout and look foreign.
+- **Standalone UI** (overlays, panels, sidebars): use Shadow DOM for full CSS
+  isolation. No helper exists yet — build one when the first module needs it.
+
+Shared infrastructure:
+
+- **`framework/styles.ts`** — single source of YouTube CSS variable references
+  (`yt.chipBg`, `yt.textPrimary`, etc.) and pill sizing constants. Modules
+  import tokens and compose their own inline styles.
+- **`framework/style-injection.ts`** — `injectStyles(css)` appends CSS to a
+  shared `<style id="productive-yt-styles">` element and returns a dispose
+  function. Use for pseudo-class rules (`:hover`, `:disabled`) that inline
+  styles cannot express. The `<style>` element is lazily created and removed
+  when the last consumer disposes.
+- **Selector convention:** `#productive-yt-*` IDs for unique injected elements.
+  No additional prefixing scheme is needed.
 
 ## Planned future modules
 
