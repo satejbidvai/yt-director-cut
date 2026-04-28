@@ -28,9 +28,6 @@ export function findAll<T extends Element = Element>(
 
 // --- Selector definitions ---
 
-// The watch-page top-level custom element.
-export const WATCH_FLEXY = "ytd-watch-flexy";
-
 // The action row: the ytd-menu-renderer inside the watch-page metadata that
 // contains Like / Share / Save / etc.
 const ACTION_ROW_SELECTOR = "ytd-watch-metadata ytd-menu-renderer";
@@ -65,8 +62,8 @@ export function findWatchLaterRow(panel: ParentNode): HTMLElement | null {
 }
 
 // The clickable surface inside a Watch Later row.
-export function findCheckboxInRow(row: ParentNode): HTMLElement | null {
-  return row.querySelector<HTMLElement>("button") ?? (row as HTMLElement);
+export function findCheckboxInRow(row: HTMLElement): HTMLElement {
+  return row.querySelector<HTMLElement>("button") ?? row;
 }
 
 // --- Overflow menu selectors (Save collapsed into three-dot menu) ---

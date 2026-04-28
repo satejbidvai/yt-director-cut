@@ -34,36 +34,3 @@ export function waitFor<T extends Element>(
     }, timeoutMs);
   });
 }
-
-/**
- * Wait for a node matched by the given predicate to disappear from `root`.
- * Resolves once it's gone or after `timeoutMs` (does not reject — caller can
- * proceed regardless).
- */
-export function waitForGone(
-  root: ParentNode,
-  predicate: () => Element | null,
-  timeoutMs = 1500,
-): Promise<void> {
-  if (!predicate()) return Promise.resolve();
-
-  return new Promise<void>((resolve) => {
-    let settled = false;
-    const finish = () => {
-      if (settled) return;
-      settled = true;
-      observer.disconnect();
-      clearTimeout(timer);
-      resolve();
-    };
-    const observer = new MutationObserver(() => {
-      if (!predicate()) finish();
-    });
-    observer.observe((root as unknown as Node) ?? document, {
-      childList: true,
-      subtree: true,
-      attributes: true,
-    });
-    const timer = setTimeout(finish, timeoutMs);
-  });
-}

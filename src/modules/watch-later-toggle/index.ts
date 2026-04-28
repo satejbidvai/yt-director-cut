@@ -11,9 +11,10 @@ import {
   findOverflowSaveItem,
   findPanelCloseButton,
   findWatchLaterRow,
+  POPUP_CONTAINER,
   warnOnceMiss,
 } from './selectors';
-import { waitFor, waitForGone } from './dom-utils';
+import { waitFor } from './dom-utils';
 
 const BUTTON_ID = 'productive-yt-watch-later-button';
 const BUTTON_LABEL = 'Watch Later';
@@ -40,7 +41,7 @@ export const watchLaterToggleModule: FeatureModule = {
       removeInjectedButton();
       if (cancelled) return;
       if (url.pathname !== '/watch') return;
-      if (!cancelled) void injectButton();
+      void injectButton(() => cancelled);
     };
 
     ctx.onNavigate(handleNavigation);
@@ -57,7 +58,7 @@ function removeInjectedButton(): void {
   document.getElementById(BUTTON_ID)?.remove();
 }
 
-async function injectButton(): Promise<void> {
+async function injectButton(isCancelled: () => boolean): Promise<void> {
   // YouTube's Polymer re-stamps the action-row children multiple times during
   // SPA navigations.  We wait for #flexible-item-buttons to (a) exist with
   // children and (b) stop mutating for 300ms before injecting.
@@ -67,6 +68,7 @@ async function injectButton(): Promise<void> {
     return;
   }
 
+  if (isCancelled()) return;
   if (document.getElementById(BUTTON_ID)) return;
   const btn = buildButton();
   flexContainer.appendChild(btn);
@@ -184,7 +186,7 @@ async function toggleWatchLater(): Promise<void> {
   // Hide the popup container BEFORE any click that would open the playlist
   // panel.  This is critical for the overflow path — without it, the panel
   // flashes visibly between saveItem.click() and the visibility assignment.
-  const popupContainer = document.querySelector<HTMLElement>('ytd-popup-container');
+  const popupContainer = document.querySelector<HTMLElement>(POPUP_CONTAINER);
   const previousVisibility = popupContainer?.style.visibility ?? '';
   if (popupContainer) popupContainer.style.visibility = 'hidden';
 
@@ -225,7 +227,7 @@ async function toggleWatchLater(): Promise<void> {
       return;
     }
 
-    const checkbox = findCheckboxInRow(watchLaterRow) ?? watchLaterRow;
+    const checkbox = findCheckboxInRow(watchLaterRow);
     checkbox.click();
 
     await new Promise((r) => setTimeout(r, 120));
@@ -237,7 +239,6 @@ async function toggleWatchLater(): Promise<void> {
       document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }));
     }
 
-    await waitForGone(document, () => findAddToPlaylistPanel(), 1500);
   } finally {
     if (popupContainer) popupContainer.style.visibility = previousVisibility;
   }

@@ -12,12 +12,6 @@ export async function getAllToggles(): Promise<FeatureToggles> {
   return readToggles();
 }
 
-export async function getEnabled(moduleId: string): Promise<boolean> {
-  const toggles = await readToggles();
-  // Default-on: missing key means enabled.
-  return toggles[moduleId] !== false;
-}
-
 export async function setEnabled(moduleId: string, value: boolean): Promise<void> {
   const toggles = await readToggles();
   toggles[moduleId] = value;
