@@ -181,19 +181,22 @@ async function toggleWatchLater(): Promise<void> {
     (actionRow ? findNativeSaveButton(actionRow) : null) ??
     findNativeSaveButton(document.querySelector('ytd-watch-metadata') ?? document);
 
-  // Path B: Save is collapsed into the three-dot overflow menu.
-  if (!saveButton) {
-    const opened = await openSaveViaOverflow(actionRow);
-    if (!opened) return;
-  }
-
+  // Hide the popup container BEFORE any click that would open the playlist
+  // panel.  This is critical for the overflow path — without it, the panel
+  // flashes visibly between saveItem.click() and the visibility assignment.
   const popupContainer = document.querySelector<HTMLElement>('ytd-popup-container');
   const previousVisibility = popupContainer?.style.visibility ?? '';
   if (popupContainer) popupContainer.style.visibility = 'hidden';
 
   try {
-    // If we found the pill, click it now (overflow path already clicked).
-    if (saveButton) saveButton.click();
+    if (saveButton) {
+      // Path A: click the pill Save button (container already hidden).
+      saveButton.click();
+    } else {
+      // Path B: Save is collapsed into the three-dot overflow menu.
+      const opened = await openSaveViaOverflow(actionRow);
+      if (!opened) return;
+    }
 
     let panel: HTMLElement;
     try {
