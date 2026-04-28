@@ -28,11 +28,7 @@ export const watchLaterToggleModule: FeatureModule = {
       removeInjectedButton();
       if (cancelled) return;
       if (url.pathname !== '/watch') return;
-      // Defer so YouTube's Polymer components finish rendering after
-      // yt-navigate-finish fires.
-      requestAnimationFrame(() => {
-        if (!cancelled) void injectButton();
-      });
+      if (!cancelled) void injectButton();
     };
 
     ctx.onNavigate(handleNavigation);
@@ -49,26 +45,71 @@ function removeInjectedButton(): void {
 }
 
 async function injectButton(): Promise<void> {
-  let actionRow: Element;
-  try {
-    actionRow = await waitFor<Element>(document, () => findActionRow(), 5000);
-  } catch {
-    warnOnceMiss("action-row", "not found within timeout");
+  // YouTube's Polymer re-stamps the action-row children multiple times during
+  // SPA navigations.  We wait for #flexible-item-buttons to (a) exist with
+  // children and (b) stop mutating for 300ms before injecting.
+  const flexContainer = await waitForStableFlexContainer();
+  if (!flexContainer) {
+    warnOnceMiss("action-row", "flexible-item-buttons did not stabilise within timeout");
     return;
   }
 
   if (document.getElementById(BUTTON_ID)) return;
+  const btn = buildButton();
+  flexContainer.appendChild(btn);
 
-  const button = buildButton();
-
-  // Append inside #flexible-item-buttons so our pill sits inline with the
-  // other action buttons (Ask, Download, etc.) and inherits the same spacing.
-  const flexContainer = actionRow.querySelector<Element>('#flexible-item-buttons');
-  if (flexContainer) {
-    flexContainer.appendChild(button);
-  } else {
-    actionRow.appendChild(button);
+  // When Save is collapsed into the overflow menu, YouTube leaves an empty
+  // (hidden) container element that still occupies flex gap space, creating a
+  // visible gap before our button.  Collapse that gap by removing our margin
+  // when the preceding sibling is not user-visible.
+  const prev = btn.previousElementSibling as HTMLElement | null;
+  if (prev && prev.offsetHeight === 0) {
+    btn.style.marginLeft = '0';
   }
+}
+
+/**
+ * Wait for #flexible-item-buttons to exist, have children, and stop receiving
+ * DOM mutations for a debounce window — meaning YouTube is done re-stamping.
+ */
+function waitForStableFlexContainer(): Promise<Element | null> {
+  const DEBOUNCE_MS = 300;
+  const TIMEOUT_MS = 6000;
+
+  return new Promise((resolve) => {
+    let debounceTimer: ReturnType<typeof setTimeout> | null = null;
+    let observer: MutationObserver | null = null;
+
+    const timeout = setTimeout(() => {
+      cleanup();
+      resolve(null);
+    }, TIMEOUT_MS);
+
+    function cleanup() {
+      if (debounceTimer) clearTimeout(debounceTimer);
+      if (observer) observer.disconnect();
+      clearTimeout(timeout);
+    }
+
+    function tryResolve() {
+      const row = findActionRow();
+      const fc = row?.querySelector<Element>('#flexible-item-buttons');
+      if (fc && fc.children.length > 0) {
+        if (debounceTimer) clearTimeout(debounceTimer);
+        debounceTimer = setTimeout(() => {
+          cleanup();
+          resolve(fc);
+        }, DEBOUNCE_MS);
+      }
+    }
+
+    // Check immediately
+    tryResolve();
+
+    // Watch for mutations
+    observer = new MutationObserver(() => tryResolve());
+    observer.observe(document, { childList: true, subtree: true });
+  });
 }
 
 function buildButton(): HTMLButtonElement {
