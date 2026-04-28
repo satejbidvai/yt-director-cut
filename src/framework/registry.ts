@@ -1,10 +1,12 @@
 import type { FeatureModule } from "./types";
 import { watchLaterToggleModule } from "../modules/watch-later-toggle";
 import { captionStyleModule } from "../modules/caption-style";
+import { hidePlaylistFeedModule } from "../modules/hide-playlist-feed";
 
 export const modules: FeatureModule[] = [
   watchLaterToggleModule,
   captionStyleModule,
+  hidePlaylistFeedModule,
 ];
 
 const seen = new Set<string>();

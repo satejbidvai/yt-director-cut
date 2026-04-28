@@ -15,6 +15,7 @@ import {
   warnOnceMiss,
 } from './selectors';
 import { waitFor } from './dom-utils';
+import { addWLId, removeWLId, getWLIds } from '../../shared/wl-store';
 
 const BUTTON_ID = 'productive-yt-watch-later-button';
 const BUTTON_LABEL = 'Watch Later';
@@ -175,13 +176,52 @@ function buildButton(): HTMLButtonElement {
  * sequence; the `finally` block always restores visibility, so a mid-sequence
  * miss can never strand the panel.
  */
-async function toggleWatchLater(): Promise<void> {
-  const actionRow = findActionRow();
-
-  // Path A: Save is a visible pill button in the action row.
+/**
+ * Click the Save button (pill or overflow) and wait for the playlist panel
+ * to become layout-ready. Returns the panel element or null on miss.
+ */
+async function openPlaylistPanel(actionRow: Element | null): Promise<HTMLElement | null> {
   const saveButton =
     (actionRow ? findNativeSaveButton(actionRow) : null) ??
     findNativeSaveButton(document.querySelector('ytd-watch-metadata') ?? document);
+
+  if (saveButton) {
+    saveButton.click();
+  } else {
+    const opened = await openSaveViaOverflow(actionRow);
+    if (!opened) return null;
+  }
+
+  // Poll until the panel is layout-ready (offsetHeight > 0).  YouTube
+  // reuses the same yt-sheet-view-model element across opens; a stale
+  // leftover from a previous close sits in the DOM with offsetHeight === 0
+  // (its tp-yt-iron-dropdown parent is display:none).  Polling for a
+  // positive offsetHeight guarantees YouTube has fully opened a fresh panel
+  // whose playlist state reflects the current truth.
+  const panelDeadline = Date.now() + 4000;
+  while (Date.now() < panelDeadline) {
+    const p = findAddToPlaylistPanel();
+    if (p && p.offsetHeight > 0) return p;
+    await new Promise(r => setTimeout(r, 100));
+  }
+
+  warnOnceMiss("popup-panel", "playlist panel did not appear after Save click");
+  return null;
+}
+
+/** Sync the WL store after a toggle click. */
+function syncWLStore(): void {
+  const videoId = new URL(location.href).searchParams.get('v');
+  if (!videoId) return;
+
+  void getWLIds().then((ids) => {
+    const wasInWL = ids.includes(videoId);
+    return wasInWL ? removeWLId(videoId) : addWLId(videoId);
+  });
+}
+
+async function toggleWatchLater(): Promise<void> {
+  const actionRow = findActionRow();
 
   // Hide the popup container BEFORE any click that would open the playlist
   // panel.  This is critical for the overflow path — without it, the panel
@@ -191,35 +231,8 @@ async function toggleWatchLater(): Promise<void> {
   if (popupContainer) popupContainer.style.visibility = 'hidden';
 
   try {
-    if (saveButton) {
-      // Path A: click the pill Save button (container already hidden).
-      saveButton.click();
-    } else {
-      // Path B: Save is collapsed into the three-dot overflow menu.
-      const opened = await openSaveViaOverflow(actionRow);
-      if (!opened) return;
-    }
-
-    // Poll until the panel is layout-ready (offsetHeight > 0).  YouTube
-    // reuses the same yt-sheet-view-model element across opens; a stale
-    // leftover from a previous close sits in the DOM with offsetHeight === 0
-    // (its tp-yt-iron-dropdown parent is display:none).  Polling for a
-    // positive offsetHeight guarantees YouTube has fully opened a fresh panel
-    // whose playlist state reflects the current truth.
-    let panel: HTMLElement | null = null;
-    const panelDeadline = Date.now() + 4000;
-    while (Date.now() < panelDeadline) {
-      const p = findAddToPlaylistPanel();
-      if (p && p.offsetHeight > 0) {
-        panel = p;
-        break;
-      }
-      await new Promise(r => setTimeout(r, 100));
-    }
-    if (!panel) {
-      warnOnceMiss("popup-panel", "playlist panel did not appear after Save click");
-      return;
-    }
+    const panel = await openPlaylistPanel(actionRow);
+    if (!panel) return;
 
     const watchLaterRow = findWatchLaterRow(panel);
     if (!watchLaterRow) {
@@ -229,6 +242,8 @@ async function toggleWatchLater(): Promise<void> {
 
     const checkbox = findCheckboxInRow(watchLaterRow);
     checkbox.click();
+
+    syncWLStore();
 
     await new Promise((r) => setTimeout(r, 120));
 
