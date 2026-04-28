@@ -4,6 +4,9 @@ import {
   findAddToPlaylistPanel,
   findCheckboxInRow,
   findNativeSaveButton,
+  findOverflowButton,
+  findOverflowDropdown,
+  findOverflowSaveItem,
   findPanelCloseButton,
   findWatchLaterRow,
   warnOnceMiss,
@@ -25,7 +28,11 @@ export const watchLaterToggleModule: FeatureModule = {
       removeInjectedButton();
       if (cancelled) return;
       if (url.pathname !== '/watch') return;
-      void injectButton();
+      // Defer so YouTube's Polymer components finish rendering after
+      // yt-navigate-finish fires.
+      requestAnimationFrame(() => {
+        if (!cancelled) void injectButton();
+      });
     };
 
     ctx.onNavigate(handleNavigation);
@@ -52,15 +59,13 @@ async function injectButton(): Promise<void> {
 
   if (document.getElementById(BUTTON_ID)) return;
 
-  const nativeSave = findNativeSaveButton(actionRow);
-  if (!nativeSave) warnOnceMiss("native-save", "no button[aria-label^=Save] in action row");
-
   const button = buildButton();
-  const anchor =
-    nativeSave?.closest('ytd-button-renderer') ?? nativeSave?.closest('yt-button-view-model') ?? nativeSave;
 
-  if (anchor && anchor.parentElement) {
-    anchor.parentElement.insertBefore(button, anchor.nextSibling);
+  // Append inside #flexible-item-buttons so our pill sits inline with the
+  // other action buttons (Ask, Download, etc.) and inherits the same spacing.
+  const flexContainer = actionRow.querySelector<Element>('#flexible-item-buttons');
+  if (flexContainer) {
+    flexContainer.appendChild(button);
   } else {
     actionRow.appendChild(button);
   }
@@ -105,7 +110,7 @@ function buildButton(): HTMLButtonElement {
 /**
  * Toggle the current video's membership in the user's Watch Later playlist by
  * driving YouTube's own UI:
- *   1. Click the native Save button.
+ *   1. Click the native Save button (pill or overflow menu item).
  *   2. Wait for the playlist panel.
  *   3. Click the "Watch later" row.
  *   4. Dismiss the panel.
@@ -116,15 +121,25 @@ function buildButton(): HTMLButtonElement {
  */
 async function toggleWatchLater(): Promise<void> {
   const actionRow = findActionRow();
-  const saveButton = actionRow ? findNativeSaveButton(actionRow) : null;
-  if (!saveButton) return;
+
+  // Path A: Save is a visible pill button in the action row.
+  const saveButton =
+    (actionRow ? findNativeSaveButton(actionRow) : null) ??
+    findNativeSaveButton(document.querySelector('ytd-watch-metadata') ?? document);
+
+  // Path B: Save is collapsed into the three-dot overflow menu.
+  if (!saveButton) {
+    const opened = await openSaveViaOverflow(actionRow);
+    if (!opened) return;
+  }
 
   const popupContainer = document.querySelector<HTMLElement>('ytd-popup-container');
   const previousVisibility = popupContainer?.style.visibility ?? '';
   if (popupContainer) popupContainer.style.visibility = 'hidden';
 
   try {
-    saveButton.click();
+    // If we found the pill, click it now (overflow path already clicked).
+    if (saveButton) saveButton.click();
 
     let panel: HTMLElement;
     try {
@@ -160,4 +175,40 @@ async function toggleWatchLater(): Promise<void> {
   } finally {
     if (popupContainer) popupContainer.style.visibility = previousVisibility;
   }
+}
+
+/**
+ * Open the three-dot overflow menu and click the "Save" item inside it.
+ * Returns `true` if the Save item was successfully clicked, `false` on any miss.
+ */
+async function openSaveViaOverflow(actionRow: Element | null): Promise<boolean> {
+  const overflowBtn = actionRow
+    ? findOverflowButton(actionRow)
+    : findOverflowButton(document.querySelector('ytd-watch-metadata') ?? document);
+
+  if (!overflowBtn) {
+    warnOnceMiss("save-button", "neither pill Save button nor overflow button found");
+    return false;
+  }
+
+  overflowBtn.click();
+
+  let dropdown: HTMLElement;
+  try {
+    dropdown = await waitFor<HTMLElement>(document, () => findOverflowDropdown(), 2000);
+  } catch {
+    warnOnceMiss("overflow-dropdown", "dropdown did not appear after clicking overflow button");
+    return false;
+  }
+
+  const saveItem = findOverflowSaveItem(dropdown);
+  if (!saveItem) {
+    // Dismiss the dropdown so it doesn't strand open.
+    document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
+    warnOnceMiss("overflow-save-item", 'no "Save" item found in overflow dropdown');
+    return false;
+  }
+
+  saveItem.click();
+  return true;
 }

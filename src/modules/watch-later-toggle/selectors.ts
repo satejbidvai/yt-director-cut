@@ -69,6 +69,34 @@ export function findCheckboxInRow(row: ParentNode): HTMLElement | null {
   return row.querySelector<HTMLElement>("button") ?? (row as HTMLElement);
 }
 
+// --- Overflow menu selectors (Save collapsed into three-dot menu) ---
+
+// The visible "More actions" three-dot button in the action row.
+// YouTube renders two buttons with aria-label="More actions" inside
+// ytd-menu-renderer; the visible one has a non-zero offsetHeight.
+export function findOverflowButton(root: ParentNode = document): HTMLElement | null {
+  const candidates = findAll<HTMLElement>(root, 'button[aria-label="More actions"]');
+  return candidates.find((b) => b.offsetHeight > 0) ?? null;
+}
+
+// The dropdown popup that appears after clicking the three-dot button.
+const OVERFLOW_DROPDOWN_SELECTOR =
+  `${POPUP_CONTAINER} tp-yt-iron-dropdown ytd-menu-popup-renderer`;
+
+export function findOverflowDropdown(): HTMLElement | null {
+  return document.querySelector<HTMLElement>(OVERFLOW_DROPDOWN_SELECTOR);
+}
+
+// The "Save" menu item inside the overflow dropdown, identified by its
+// yt-formatted-string text content (no aria-label or <button> exists here).
+export function findOverflowSaveItem(dropdown: ParentNode): HTMLElement | null {
+  const items = findAll<HTMLElement>(dropdown, "ytd-menu-service-item-renderer");
+  return items.find((item) => {
+    const label = item.querySelector("yt-formatted-string");
+    return label && /^\s*save\s*$/i.test(label.textContent ?? "");
+  }) ?? null;
+}
+
 // The close affordance on the playlist panel.  The new panel is a dropdown
 // that closes on outside click or Escape — there may be no explicit close
 // button.
