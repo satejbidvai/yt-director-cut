@@ -11,7 +11,7 @@ watch page.
 2. `pnpm build`
 3. Open `chrome://extensions`, enable **Developer mode**, click **Load unpacked**,
    and pick the generated `dist/` directory.
-4. Open a watch page on `www.youtube.com` — a `📑 Watch Later` pill should appear
+4. Open a watch page on `www.youtube.com` — a **Watch Later** pill should appear
    in the action row.
 
 ## Dev loop
