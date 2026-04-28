@@ -198,14 +198,23 @@ async function toggleWatchLater(): Promise<void> {
       if (!opened) return;
     }
 
-    let panel: HTMLElement;
-    try {
-      panel = await waitFor<HTMLElement>(
-        (popupContainer ?? document) as ParentNode,
-        () => findAddToPlaylistPanel(),
-        4000
-      );
-    } catch {
+    // Poll until the panel is layout-ready (offsetHeight > 0).  YouTube
+    // reuses the same yt-sheet-view-model element across opens; a stale
+    // leftover from a previous close sits in the DOM with offsetHeight === 0
+    // (its tp-yt-iron-dropdown parent is display:none).  Polling for a
+    // positive offsetHeight guarantees YouTube has fully opened a fresh panel
+    // whose playlist state reflects the current truth.
+    let panel: HTMLElement | null = null;
+    const panelDeadline = Date.now() + 4000;
+    while (Date.now() < panelDeadline) {
+      const p = findAddToPlaylistPanel();
+      if (p && p.offsetHeight > 0) {
+        panel = p;
+        break;
+      }
+      await new Promise(r => setTimeout(r, 100));
+    }
+    if (!panel) {
       warnOnceMiss("popup-panel", "playlist panel did not appear after Save click");
       return;
     }
