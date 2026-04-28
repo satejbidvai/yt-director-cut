@@ -6,9 +6,13 @@ A Manifest V3 Chrome extension for **desktop YouTube** (`www.youtube.com` only).
 It adds small productivity features via a pluggable module system. Sideload-only
 for now (no Chrome Web Store submission).
 
-The first (and currently only) module is **Watch Later toggle** — a one-click
-pill button in the watch-page action row that adds/removes the current video
-from the user's Watch Later playlist.
+Current modules:
+
+- **Watch Later toggle** — a one-click pill button in the watch-page action row
+  that adds/removes the current video from the user's Watch Later playlist.
+- **Caption Style** — opinionated caption styling (bold, text shadow, rounded
+  semi-transparent background). Context-aware font sizing: smaller for feed
+  hover previews, larger on the watch page. Pure CSS injection, no DOM queries.
 
 ## Domain knowledge you need
 
@@ -63,6 +67,8 @@ src/
       index.ts               — FeatureModule: injection, click choreography.
       selectors.ts           — All YouTube DOM queries for this module.
       dom-utils.ts           — waitFor / waitForGone via MutationObserver.
+    caption-style/
+      index.ts               — FeatureModule: pure CSS injection for captions.
   popup/
     index.html / popup.ts    — Toolbar popup: one checkbox per module.
 ```
@@ -94,7 +100,7 @@ type ModuleContext = {
 ### Adding a new module
 
 1. Create `src/modules/<name>/index.ts` exporting a `FeatureModule`.
-2. Put selectors in `src/modules/<name>/selectors.ts`.
+2. Put selectors in `src/modules/<name>/selectors.ts` (skip for CSS-only modules).
 3. Register in `src/framework/registry.ts`.
 
 ## Build & dev
