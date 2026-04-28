@@ -17,8 +17,6 @@ const TAG = '[productive-yt:wl-store]';
 // InnerTube fetch
 // ---------------------------------------------------------------------------
 
-/** YouTube InnerTube client version — update if requests start failing. */
-const CLIENT_VERSION = '2.20260101.00.00';
 const ORIGIN = 'https://www.youtube.com';
 
 /**
@@ -134,7 +132,7 @@ async function innerTubeBrowse(
     body: JSON.stringify({
       ...body,
       context: {
-        client: { clientName: 'WEB', clientVersion: CLIENT_VERSION },
+        client: { clientName: 'WEB', clientVersion: ytcfg.get('INNERTUBE_CLIENT_VERSION') },
       },
     }),
   });
