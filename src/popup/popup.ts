@@ -21,17 +21,8 @@ async function render(): Promise<void> {
     const row = document.createElement("li");
     row.className = "module-row";
 
-    const checkboxId = `toggle-${mod.id}`;
-    const checkbox = document.createElement("input");
-    checkbox.type = "checkbox";
-    checkbox.id = checkboxId;
-    checkbox.checked = enabled;
-    checkbox.addEventListener("change", () => {
-      void setEnabled(mod.id, checkbox.checked);
-    });
-
     const label = document.createElement("label");
-    label.htmlFor = checkboxId;
+    label.htmlFor = `toggle-${mod.id}`;
 
     const name = document.createElement("span");
     name.className = "name";
@@ -45,8 +36,30 @@ async function render(): Promise<void> {
       label.appendChild(desc);
     }
 
-    row.appendChild(checkbox);
+    const toggle = document.createElement("div");
+    toggle.className = "toggle";
+
+    const checkbox = document.createElement("input");
+    checkbox.type = "checkbox";
+    checkbox.id = `toggle-${mod.id}`;
+    checkbox.checked = enabled;
+    checkbox.addEventListener("change", () => {
+      void setEnabled(mod.id, checkbox.checked);
+    });
+
+    const track = document.createElement("label");
+    track.className = "toggle-track";
+    track.htmlFor = `toggle-${mod.id}`;
+
+    const knob = document.createElement("span");
+    knob.className = "toggle-knob";
+
+    toggle.appendChild(checkbox);
+    toggle.appendChild(track);
+    toggle.appendChild(knob);
+
     row.appendChild(label);
+    row.appendChild(toggle);
     list.appendChild(row);
   }
 }

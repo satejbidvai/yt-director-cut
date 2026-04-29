@@ -1,18 +1,20 @@
 :root {
   --bg: #ffffff;
   --fg: #0f0f0f;
-  --muted: #606060;
-  --border: rgba(0, 0, 0, 0.1);
-  --accent: #065fd4;
+  --muted: #6b6b6b;
+  --border: rgba(0, 0, 0, 0.06);
+  --accent: #e5484d;
+  --toggle-off: #ccc;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --bg: #212121;
-    --fg: #f1f1f1;
-    --muted: #aaaaaa;
-    --border: rgba(255, 255, 255, 0.12);
-    --accent: #3ea6ff;
+    --bg: #161616;
+    --fg: #e8e8e8;
+    --muted: #888888;
+    --border: rgba(255, 255, 255, 0.06);
+    --accent: #e5484d;
+    --toggle-off: #333333;
   }
 }
 
@@ -20,68 +22,135 @@
   box-sizing: border-box;
 }
 
+html {
+  background: var(--bg);
+}
+
 body {
   margin: 0;
-  min-width: 280px;
-  padding: 14px 16px 12px;
+  width: 320px;
+  padding: 16px 18px 14px;
   background: var(--bg);
   color: var(--fg);
-  font: 14px/1.4 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font: 14px/1.4 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    sans-serif;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+}
+
+/* ── Header ── */
+
+header {
+  margin-bottom: 6px;
 }
 
 header h1 {
-  margin: 0 0 2px;
-  font-size: 15px;
+  margin: 0;
+  font-size: 16px;
   font-weight: 600;
+  letter-spacing: -0.01em;
 }
 
-.subtitle {
-  margin: 0 0 12px;
-  color: var(--muted);
-  font-size: 12px;
+header h1 .yt {
+  color: var(--accent);
 }
+
+/* ── Module list ── */
 
 .modules {
   list-style: none;
   margin: 0;
   padding: 0;
-  border-top: 1px solid var(--border);
 }
 
 .module-row {
   display: flex;
-  align-items: flex-start;
-  gap: 10px;
-  padding: 10px 0;
-  border-bottom: 1px solid var(--border);
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 10px;
+  margin: 0 -10px;
+  border-radius: 8px;
+  transition: background 120ms ease;
+}
+
+.module-row:hover {
+  background: var(--border);
 }
 
 .module-row label {
   flex: 1;
   cursor: pointer;
+  min-width: 0;
 }
 
 .module-row .name {
-  font-weight: 500;
+  display: block;
+  font-weight: 400;
+  font-size: 13.5px;
+  line-height: 1.3;
 }
 
 .module-row .description {
   display: block;
   margin-top: 2px;
   color: var(--muted);
-  font-size: 12px;
+  font-size: 11.5px;
+  line-height: 1.35;
+  text-wrap: pretty;
 }
 
-.module-row input[type="checkbox"] {
-  margin-top: 2px;
-  accent-color: var(--accent);
+/* ── Toggle switch ── */
+
+.toggle {
+  position: relative;
+  flex-shrink: 0;
+  width: 36px;
+  height: 20px;
+}
+
+.toggle input {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.toggle-track {
+  display: block;
+  width: 36px;
+  height: 20px;
+  border-radius: 10px;
+  background: var(--toggle-off);
+  cursor: pointer;
+  transition: background 150ms ease-out;
+}
+
+.toggle-knob {
+  display: block;
+  position: absolute;
+  top: 2px;
+  left: 2px;
   width: 16px;
   height: 16px;
-  cursor: pointer;
+  border-radius: 50%;
+  background: #ffffff;
+  transition: transform 150ms ease-out;
+  pointer-events: none;
 }
 
+.toggle input:checked + .toggle-track {
+  background: var(--accent);
+}
+
+.toggle input:checked ~ .toggle-knob {
+  transform: translateX(16px);
+}
+
+/* ── Empty state ── */
+
 .empty {
-  padding: 12px 0;
+  padding: 14px 0;
   color: var(--muted);
   font-size: 12px;
   text-align: center;

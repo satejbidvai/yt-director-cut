@@ -22,9 +22,8 @@ const BUTTON_LABEL = 'Watch Later';
 
 export const watchLaterToggleModule: FeatureModule = {
   id: 'watch-later-toggle',
-  name: 'Watch Later toggle',
-  description:
-    'Adds a one-click button next to the native Save button that toggles the current video in your Watch Later playlist.',
+  name: 'Watch Later',
+  description: 'Save videos with one click',
   enable(ctx) {
     let cancelled = false;
 

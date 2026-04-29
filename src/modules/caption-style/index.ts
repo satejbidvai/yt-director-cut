@@ -36,8 +36,7 @@ const CAPTION_CSS = `
 export const captionStyleModule: FeatureModule = {
   id: "caption-style",
   name: "Caption Style",
-  description:
-    "Styled captions with bold text, text shadow, and rounded background",
+  description: "Bolder, easier-to-read subtitles",
   enable() {
     const dispose = injectStyles(CAPTION_CSS);
     return () => dispose();
