@@ -11,7 +11,7 @@
  */
 
 const STORAGE_KEY = 'watchLaterIds';
-const TAG = '[productive-yt:wl-store]';
+const TAG = '[redline:wl-store]';
 
 // ---------------------------------------------------------------------------
 // InnerTube fetch

@@ -17,7 +17,7 @@ import {
 import { waitFor } from './dom-utils';
 import { addWLId, removeWLId, getWLIds } from '../../shared/wl-store';
 
-const BUTTON_ID = 'productive-yt-watch-later-button';
+const BUTTON_ID = 'redline-watch-later-button';
 const BUTTON_LABEL = 'Watch Later';
 
 export const watchLaterToggleModule: FeatureModule = {

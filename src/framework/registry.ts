@@ -12,7 +12,7 @@ export const modules: FeatureModule[] = [
 const seen = new Set<string>();
 for (const m of modules) {
   if (seen.has(m.id)) {
-    throw new Error(`[productive-yt] duplicate module id: ${m.id}`);
+    throw new Error(`[redline] duplicate module id: ${m.id}`);
   }
   seen.add(m.id);
 }

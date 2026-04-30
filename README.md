@@ -1,4 +1,4 @@
-# Productive YT
+# Redline
 
 A personal Chrome extension for desktop YouTube. Designed as a small, growable
 collection of feature modules. The first shipping feature is a **Watch Later

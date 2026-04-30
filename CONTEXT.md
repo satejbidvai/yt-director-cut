@@ -1,4 +1,4 @@
-# AI Context — Productive YT
+# AI Context — Redline
 
 ## What this is
 
@@ -142,11 +142,11 @@ Shared infrastructure:
   (`yt.chipBg`, `yt.textPrimary`, etc.) and pill sizing constants. Modules
   import tokens and compose their own inline styles.
 - **`framework/style-injection.ts`** — `injectStyles(css)` appends CSS to a
-  shared `<style id="productive-yt-styles">` element and returns a dispose
+  shared `<style id="redline-styles">` element and returns a dispose
   function. Use for pseudo-class rules (`:hover`, `:disabled`) that inline
   styles cannot express. The `<style>` element is lazily created and removed
   when the last consumer disposes.
-- **Selector convention:** `#productive-yt-*` IDs for unique injected elements.
+- **Selector convention:** `#redline-*` IDs for unique injected elements.
   No additional prefixing scheme is needed.
 
 ## Planned future modules

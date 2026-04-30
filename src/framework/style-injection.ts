@@ -1,4 +1,4 @@
-const STYLE_ID = "productive-yt-styles";
+const STYLE_ID = "redline-styles";
 
 let styleEl: HTMLStyleElement | null = null;
 let refCount = 0;
