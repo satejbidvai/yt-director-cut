@@ -8,6 +8,7 @@ import {
   findCardMenuButton,
   findCardMenuContainer,
   findNotInterestedItem,
+  findVideoPreview,
   warnOnceMiss,
 } from './selectors';
 
@@ -201,7 +202,15 @@ async function handleNotInterested(card: HTMLElement): Promise<void> {
     }
 
     notInterestedItem.click();
+    dismissVideoPreview();
   } finally {
     popupContainer.style.visibility = '';
   }
+}
+
+function dismissVideoPreview(): void {
+  const preview = findVideoPreview();
+  if (!preview) return;
+  preview.setAttribute('hidden', '');
+  preview.querySelector<HTMLVideoElement>('video')?.pause();
 }

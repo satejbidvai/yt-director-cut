@@ -40,6 +40,11 @@ export function findCardMenuContainer(card: Element): HTMLElement | null {
 }
 
 
+/** The global floating video preview element. */
+export function findVideoPreview(): Element | null {
+  return document.querySelector('#video-preview ytd-video-preview');
+}
+
 /**
  * The "Not interested" clickable element inside the dropdown menu.
  * YouTube now uses yt-list-item-view-model with a button inside.
