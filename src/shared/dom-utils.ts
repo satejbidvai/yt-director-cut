@@ -23,8 +23,7 @@ export function waitFor<T extends Element>(
       }
     });
 
-    const observeRoot: Node = (root as unknown as Node) ?? document;
-    observer.observe(observeRoot, { childList: true, subtree: true });
+    observer.observe(root, { childList: true, subtree: true });
 
     const timer = setTimeout(() => {
       if (settled) return;

@@ -14,7 +14,7 @@ import {
   POPUP_CONTAINER,
   warnOnceMiss,
 } from './selectors';
-import { waitFor } from './dom-utils';
+import { waitFor } from '../../shared/dom-utils';
 import { addWLId, removeWLId, getWLIds } from '../../shared/wl-store';
 
 const BUTTON_ID = 'redline-watch-later-button';

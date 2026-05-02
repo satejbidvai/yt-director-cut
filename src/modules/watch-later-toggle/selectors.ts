@@ -9,15 +9,10 @@
  * Every miss fires a single `console.warn` per session via `findOrWarn`.
  */
 
-const TAG = '[redline:watch-later-toggle]';
+import { createWarnOnceMiss } from '../../shared/logger';
 
 /** Warn once per key per session. Callers use this after a confirmed miss. */
-const warnedKeys = new Set<string>();
-export function warnOnceMiss(key: string, detail: string): void {
-  if (warnedKeys.has(key)) return;
-  warnedKeys.add(key);
-  console.warn(TAG, `selector miss key="${key}"`, detail);
-}
+export const warnOnceMiss = createWarnOnceMiss('[redline:watch-later-toggle]');
 
 function findAll<T extends Element = Element>(root: ParentNode, selector: string): T[] {
   return Array.from(root.querySelectorAll<T>(selector));
