@@ -1,9 +1,9 @@
 import type { FeatureModule } from '../../framework/types';
 import { injectStyles } from '../../framework/style-injection';
+import { clickOverflowMenuItem } from '../../shared/overflow-menu';
 import {
   CARD_SELECTOR,
   PROCESSED_ATTR,
-  POPUP_CONTAINER,
   findFeedContainer,
   findCardMenuButton,
   findCardMenuContainer,
@@ -130,29 +130,6 @@ export const notInterestedModule: FeatureModule = {
   },
 };
 
-/**
- * Wait for the iron-dropdown inside the popup container to transition to the
- * given open/closed state. YouTube toggles `aria-hidden` and `display` on
- * `tp-yt-iron-dropdown` when opening/closing.
- */
-function waitForDropdown(
-  popup: HTMLElement,
-  open: boolean,
-  timeoutMs: number,
-): Promise<boolean> {
-  return new Promise((resolve) => {
-    const deadline = Date.now() + timeoutMs;
-    const check = () => {
-      const dd = popup.querySelector<HTMLElement>('tp-yt-iron-dropdown');
-      const isOpen = dd ? dd.getAttribute('aria-hidden') !== 'true' : false;
-      if (isOpen === open) return resolve(true);
-      if (Date.now() >= deadline) return resolve(false);
-      setTimeout(check, 20);
-    };
-    check();
-  });
-}
-
 async function handleNotInterested(card: HTMLElement): Promise<void> {
   const menuBtn = findCardMenuButton(card);
   if (!menuBtn) {
@@ -160,52 +137,13 @@ async function handleNotInterested(card: HTMLElement): Promise<void> {
     return;
   }
 
-  const popupContainer = document.querySelector<HTMLElement>(POPUP_CONTAINER);
-  if (!popupContainer) return;
-
-  // If a previous dropdown is still open (e.g. from a failed attempt),
-  // close it first with Escape before proceeding.
-  const existingDropdown = popupContainer.querySelector<HTMLElement>('tp-yt-iron-dropdown');
-  if (existingDropdown && existingDropdown.getAttribute('aria-hidden') !== 'true') {
-    document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
-    await waitForDropdown(popupContainer, false, 500);
+  const clicked = await clickOverflowMenuItem(menuBtn, findNotInterestedItem);
+  if (!clicked) {
+    warnOnceMiss('not-interested-item', '"Not interested" item not found in menu');
+    return;
   }
 
-  popupContainer.style.visibility = 'hidden';
-
-  try {
-    menuBtn.click();
-
-    // Wait for the dropdown to actually open before searching for items.
-    // This prevents matching stale items left over from a previous dropdown.
-    const opened = await waitForDropdown(popupContainer, true, 2000);
-
-    if (!opened) {
-      document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
-      return;
-    }
-
-    // Now poll for the "Not interested" item within the freshly-opened dropdown.
-    const deadline = Date.now() + 2000;
-    let notInterestedItem: HTMLElement | null = null;
-
-    while (Date.now() < deadline) {
-      notInterestedItem = findNotInterestedItem(popupContainer);
-      if (notInterestedItem) break;
-      await new Promise((r) => setTimeout(r, 30));
-    }
-
-    if (!notInterestedItem) {
-      document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
-      warnOnceMiss('not-interested-item', '"Not interested" item not found in dropdown');
-      return;
-    }
-
-    notInterestedItem.click();
-    dismissVideoPreview();
-  } finally {
-    popupContainer.style.visibility = '';
-  }
+  dismissVideoPreview();
 }
 
 function dismissVideoPreview(): void {

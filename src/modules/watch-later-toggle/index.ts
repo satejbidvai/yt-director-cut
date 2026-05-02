@@ -1,20 +1,18 @@
 import type { FeatureModule } from '../../framework/types';
 import { yt, pill } from '../../framework/styles';
 import { injectStyles } from '../../framework/style-injection';
+import { clickOverflowMenuItem, POPUP_CONTAINER } from '../../shared/overflow-menu';
 import {
   findActionRow,
   findAddToPlaylistPanel,
   findCheckboxInRow,
   findNativeSaveButton,
   findOverflowButton,
-  findOverflowDropdown,
   findOverflowSaveItem,
   findPanelCloseButton,
   findWatchLaterRow,
-  POPUP_CONTAINER,
   warnOnceMiss,
 } from './selectors';
-import { waitFor } from '../../shared/dom-utils';
 import { addWLId, removeWLId, getWLIds } from '../../shared/wl-store';
 
 const BUTTON_ID = 'redline-watch-later-button';
@@ -272,24 +270,11 @@ async function openSaveViaOverflow(actionRow: Element | null): Promise<boolean> 
     return false;
   }
 
-  overflowBtn.click();
-
-  let dropdown: HTMLElement;
-  try {
-    dropdown = await waitFor<HTMLElement>(document, () => findOverflowDropdown(), 2000);
-  } catch {
-    warnOnceMiss("overflow-dropdown", "dropdown did not appear after clicking overflow button");
+  const clicked = await clickOverflowMenuItem(overflowBtn, findOverflowSaveItem);
+  if (!clicked) {
+    warnOnceMiss("overflow-save-item", '"Save" item not found in overflow menu');
     return false;
   }
 
-  const saveItem = findOverflowSaveItem(dropdown);
-  if (!saveItem) {
-    // Dismiss the dropdown so it doesn't strand open.
-    document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
-    warnOnceMiss("overflow-save-item", 'no "Save" item found in overflow dropdown');
-    return false;
-  }
-
-  saveItem.click();
   return true;
 }

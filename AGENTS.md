@@ -6,6 +6,7 @@
 - User-visible strings (popup module titles/descriptions and similar) should stay short and benefit-oriented for everyday users, not technical explanations of implementation.
 - Prefer the simplest workable approach for hover, layout, and visibility (CSS-first or small DOM/CSS changes) over JS that fires routinely on pointer movement when the goal can be met without it.
 - For YouTube feed/card UI or selectors, confirm structure against the live page (Chrome DevTools or a connected browser MCP) rather than guessing class names or DOM shape.
+- Shared YouTube/DOM helpers should not emit generic internal logs on failure where the caller’s module/feature context would blur; return errors or `null` and let the feature module log with its own tag so diagnostics show which feature failed.
 
 ## Learned Workspace Facts
 

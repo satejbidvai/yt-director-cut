@@ -13,7 +13,6 @@ export const warnOnceMiss = createWarnOnceMiss('[redline:not-interested]');
 
 export const CARD_SELECTOR = 'ytd-rich-item-renderer';
 export const PROCESSED_ATTR = 'data-redline-ni';
-export const POPUP_CONTAINER = 'ytd-popup-container';
 
 /** The feed grid container to observe for new cards. */
 export function findFeedContainer(): Element | null {

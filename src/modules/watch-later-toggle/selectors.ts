@@ -10,6 +10,7 @@
  */
 
 import { createWarnOnceMiss } from '../../shared/logger';
+import { POPUP_CONTAINER } from '../../shared/overflow-menu';
 
 /** Warn once per key per session. Callers use this after a confirmed miss. */
 export const warnOnceMiss = createWarnOnceMiss('[redline:watch-later-toggle]');
@@ -33,12 +34,6 @@ export function findNativeSaveButton(root: ParentNode = document): HTMLElement |
   const candidates = findAll<HTMLElement>(root, 'button[aria-label]');
   return candidates.find((b) => /^save\b/i.test(b.getAttribute('aria-label') ?? '')) ?? null;
 }
-
-// The popup container that hosts the "Save to playlist" panel after Save is
-// clicked.  YouTube renders this inside `ytd-popup-container` at the end of
-// <body>.  The panel itself is now a `yt-sheet-view-model` inside a
-// `tp-yt-iron-dropdown`.
-export const POPUP_CONTAINER = 'ytd-popup-container';
 
 export function findAddToPlaylistPanel(): HTMLElement | null {
   return document.querySelector<HTMLElement>(`${POPUP_CONTAINER} yt-sheet-view-model`);
@@ -64,13 +59,6 @@ export function findCheckboxInRow(row: HTMLElement): HTMLElement {
 export function findOverflowButton(root: ParentNode = document): HTMLElement | null {
   const candidates = findAll<HTMLElement>(root, 'button[aria-label="More actions"]');
   return candidates.find((b) => b.offsetHeight > 0) ?? null;
-}
-
-// The dropdown popup that appears after clicking the three-dot button.
-const OVERFLOW_DROPDOWN_SELECTOR = `${POPUP_CONTAINER} tp-yt-iron-dropdown ytd-menu-popup-renderer`;
-
-export function findOverflowDropdown(): HTMLElement | null {
-  return document.querySelector<HTMLElement>(OVERFLOW_DROPDOWN_SELECTOR);
 }
 
 // The "Save" menu item inside the overflow dropdown, identified by its
