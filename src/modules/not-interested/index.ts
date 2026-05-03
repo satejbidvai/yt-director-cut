@@ -1,4 +1,5 @@
 import type { FeatureModule } from '../../framework/types';
+import { overlayIcon } from '../../framework/styles';
 import { injectStyles } from '../../framework/style-injection';
 import { clickOverflowMenuItem } from '../../shared/overflow-menu';
 import {
@@ -29,34 +30,11 @@ export const notInterestedModule: FeatureModule = {
       [${PROCESSED_ATTR}] .ytLockupMetadataViewModelTextContainer {
         padding-right: 36px;
       }
+      ${overlayIcon.css(BUTTON_CLASS, CARD_SELECTOR)}
       .${BUTTON_CLASS} {
         position: absolute;
         top: -6px;
         right: 26px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        width: 36px;
-        height: 36px;
-        padding: 0;
-        border: none;
-        border-radius: 18px;
-        background: transparent;
-        color: rgb(241, 241, 241);
-        cursor: pointer;
-        opacity: 0;
-        transition: opacity 0.2s;
-      }
-      ${CARD_SELECTOR}:hover .${BUTTON_CLASS},
-      .${BUTTON_CLASS}:focus-visible {
-        opacity: 1;
-      }
-      .${BUTTON_CLASS}:hover {
-        background: var(--yt-spec-badge-chip-background, rgba(255,255,255,0.1));
-      }
-      .${BUTTON_CLASS} svg {
-        width: 20px;
-        height: 20px;
       }
     `);
 
