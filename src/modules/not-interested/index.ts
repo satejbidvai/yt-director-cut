@@ -61,13 +61,16 @@ export const notInterestedModule: FeatureModule = {
     `);
 
     function processCard(card: Element): void {
-      if (card.hasAttribute(PROCESSED_ATTR)) return;
+      // Check for the actual button, not just the attribute — YouTube's SPA
+      // rebuilds card internals on navigation while preserving the outer element.
+      if (card.querySelector(`.${BUTTON_CLASS}`)) return;
       if (card.querySelector('ytd-ad-slot-renderer')) return;
       if (card.querySelector('a[href*="googleadservices"]')) return;
-      card.setAttribute(PROCESSED_ATTR, '1');
 
       const menuContainer = findCardMenuContainer(card);
       if (!menuContainer || !menuContainer.parentElement) return;
+
+      card.setAttribute(PROCESSED_ATTR, '1');
 
       const btn = document.createElement('button');
       btn.className = BUTTON_CLASS;
