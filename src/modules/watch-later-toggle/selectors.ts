@@ -82,3 +82,43 @@ export function findPanelCloseButton(panel: ParentNode): HTMLElement | null {
     panel.querySelector<HTMLElement>('#close-button button')
   );
 }
+
+// --- WL playlist page selectors (/playlist?list=WL) ---
+
+export const PLAYLIST_ITEM_SELECTOR = 'ytd-playlist-video-renderer';
+export const WL_PROCESSED_ATTR = 'data-redline-wl-remove';
+
+/** The playlist contents container to observe for new items. */
+export function findWLPlaylistContainer(): Element | null {
+  return (
+    document.querySelector('ytd-playlist-video-list-renderer #contents') ??
+    document.querySelector('ytd-playlist-video-list-renderer')
+  );
+}
+
+/** The "Action menu" three-dot button scoped to a playlist item. */
+export function findPlaylistItemMenuButton(item: Element): HTMLElement | null {
+  return item.querySelector<HTMLElement>('#menu button[aria-label="Action menu"]');
+}
+
+/** The "Remove from Watch later" item inside the overflow dropdown. */
+export function findRemoveFromWLItem(dropdown: ParentNode): HTMLElement | null {
+  const items = findAll<HTMLElement>(dropdown, 'ytd-menu-service-item-renderer');
+  return (
+    items.find((item) => {
+      const label = item.querySelector('yt-formatted-string');
+      return label && /remove from watch later/i.test(label.textContent ?? '');
+    }) ?? null
+  );
+}
+
+/** Extract the video ID from a playlist item's title link href. */
+export function extractVideoIdFromItem(item: Element): string | null {
+  const link = item.querySelector<HTMLAnchorElement>('a#video-title');
+  if (!link) return null;
+  try {
+    return new URL(link.href).searchParams.get('v');
+  } catch {
+    return null;
+  }
+}
