@@ -17,8 +17,8 @@ function buildHideCSS(ids: string[]): string {
 
 export const hidePlaylistFeedModule: FeatureModule = {
   id: 'hide-playlist-feed',
-  name: 'Hide Watched',
-  description: 'Remove Watch Later videos from your feed',
+  name: 'Hide Saved',
+  description: 'Hide videos from your home feed that are already in Watch Later',
 
   enable(ctx) {
     let disposeStyles: (() => void) | null = null;

@@ -1,12 +1,13 @@
 {
   "name": "redline",
   "version": "0.1.0",
-  "description": "Personal YouTube productivity Chrome extension.",
+  "description": "A better YouTube experience.",
   "type": "module",
   "private": true,
   "scripts": {
     "dev": "vite",
     "build": "vite build",
+    "build:prod": "vite build --outDir dist-prod",
     "typecheck": "tsc --noEmit",
     "lint:dead-code": "fallow dead-code",
     "lint:health": "fallow health",

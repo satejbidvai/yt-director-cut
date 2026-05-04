@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "Redline",
   "version": "0.1.0",
-  "description": "Personal YouTube productivity tweaks. First feature: a Watch Later toggle anchored next to the native Save button.",
+  "description": "A better YouTube experience.",
   "action": {
     "default_title": "Redline",
     "default_popup": "src/popup/index.html",
