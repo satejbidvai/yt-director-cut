@@ -13,7 +13,7 @@
  * Silent on failure — returns null so callers can warn with their own tags.
  */
 
-export const POPUP_CONTAINER = 'ytd-popup-container';
+const POPUP_CONTAINER = 'ytd-popup-container';
 
 /**
  * Open a YouTube overflow dropdown, find and click an item.

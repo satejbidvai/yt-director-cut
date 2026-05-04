@@ -1,17 +1,7 @@
 import { yt, pill } from '../../framework/styles';
-import { clickOverflowMenuItem, POPUP_CONTAINER } from '../../shared/overflow-menu';
-import {
-  findActionRow,
-  findAddToPlaylistPanel,
-  findCheckboxInRow,
-  findNativeSaveButton,
-  findOverflowButton,
-  findOverflowSaveItem,
-  findPanelCloseButton,
-  findWatchLaterRow,
-  warnOnceMiss,
-} from './selectors';
+import { findActionRow, warnOnceMiss } from './selectors';
 import { addWLId, removeWLId, getWLIds } from '../../shared/wl-store';
+import { addToWatchLater, removeFromWatchLater } from '../../shared/yt-action';
 
 const BUTTON_ID = 'redline-watch-later-button';
 const BUTTON_LABEL = 'Watch Later';
@@ -126,6 +116,7 @@ function buildButton(): HTMLButtonElement {
   btn.addEventListener('click', (ev) => {
     ev.preventDefault();
     ev.stopPropagation();
+    if (btn.disabled) return;
     btn.disabled = true;
     toggleWatchLater().finally(() => {
       btn.disabled = false;
@@ -134,120 +125,25 @@ function buildButton(): HTMLButtonElement {
   return btn;
 }
 
-/**
- * Toggle the current video's membership in the user's Watch Later playlist by
- * driving YouTube's own UI:
- *   1. Click the native Save button (pill or overflow menu item).
- *   2. Wait for the playlist panel.
- *   3. Click the "Watch later" row.
- *   4. Dismiss the panel.
- *
- * The panel is masked with `visibility: hidden` for the duration of the
- * sequence; the `finally` block always restores visibility, so a mid-sequence
- * miss can never strand the panel.
- */
-/**
- * Click the Save button (pill or overflow) and wait for the playlist panel
- * to become layout-ready. Returns the panel element or null on miss.
- */
-async function openPlaylistPanel(actionRow: Element | null): Promise<HTMLElement | null> {
-  const saveButton =
-    (actionRow ? findNativeSaveButton(actionRow) : null) ??
-    findNativeSaveButton(document.querySelector('ytd-watch-metadata') ?? document);
-
-  if (saveButton) {
-    saveButton.click();
-  } else {
-    const opened = await openSaveViaOverflow(actionRow);
-    if (!opened) return null;
-  }
-
-  // Poll until the panel is layout-ready (offsetHeight > 0).  YouTube
-  // reuses the same yt-sheet-view-model element across opens; a stale
-  // leftover from a previous close sits in the DOM with offsetHeight === 0
-  // (its tp-yt-iron-dropdown parent is display:none).  Polling for a
-  // positive offsetHeight guarantees YouTube has fully opened a fresh panel
-  // whose playlist state reflects the current truth.
-  const panelDeadline = Date.now() + 4000;
-  while (Date.now() < panelDeadline) {
-    const p = findAddToPlaylistPanel();
-    if (p && p.offsetHeight > 0) return p;
-    await new Promise(r => setTimeout(r, 100));
-  }
-
-  warnOnceMiss("popup-panel", "playlist panel did not appear after Save click");
-  return null;
-}
-
-/** Sync the WL store after a toggle click. */
-function syncWLStore(): void {
+async function toggleWatchLater(): Promise<void> {
   const videoId = new URL(location.href).searchParams.get('v');
   if (!videoId) return;
 
-  void getWLIds().then((ids) => {
-    const wasInWL = ids.includes(videoId);
-    return wasInWL ? removeWLId(videoId) : addWLId(videoId);
-  });
-}
+  const ids = await getWLIds();
+  const isInWL = ids.includes(videoId);
 
-async function toggleWatchLater(): Promise<void> {
-  const actionRow = findActionRow();
+  const dispatched = isInWL
+    ? removeFromWatchLater(videoId)
+    : addToWatchLater(videoId);
 
-  // Hide the popup container BEFORE any click that would open the playlist
-  // panel.  This is critical for the overflow path — without it, the panel
-  // flashes visibly between saveItem.click() and the visibility assignment.
-  const popupContainer = document.querySelector<HTMLElement>(POPUP_CONTAINER);
-  const previousVisibility = popupContainer?.style.visibility ?? '';
-  if (popupContainer) popupContainer.style.visibility = 'hidden';
-
-  try {
-    const panel = await openPlaylistPanel(actionRow);
-    if (!panel) return;
-
-    const watchLaterRow = findWatchLaterRow(panel);
-    if (!watchLaterRow) {
-      warnOnceMiss("watch-later-row", "no row with aria-label^=Watch later in panel");
-      return;
-    }
-
-    const checkbox = findCheckboxInRow(watchLaterRow);
-    checkbox.click();
-
-    syncWLStore();
-
-    await new Promise((r) => setTimeout(r, 120));
-
-    const closeBtn = findPanelCloseButton(panel);
-    if (closeBtn) {
-      closeBtn.click();
-    } else {
-      document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }));
-    }
-
-  } finally {
-    if (popupContainer) popupContainer.style.visibility = previousVisibility;
-  }
-}
-
-/**
- * Open the three-dot overflow menu and click the "Save" item inside it.
- * Returns `true` if the Save item was successfully clicked, `false` on any miss.
- */
-async function openSaveViaOverflow(actionRow: Element | null): Promise<boolean> {
-  const overflowBtn = actionRow
-    ? findOverflowButton(actionRow)
-    : findOverflowButton(document.querySelector('ytd-watch-metadata') ?? document);
-
-  if (!overflowBtn) {
-    warnOnceMiss("save-button", "neither pill Save button nor overflow button found");
-    return false;
+  if (!dispatched) {
+    warnOnceMiss('ytd-app', 'ytd-app element not found — cannot toggle Watch Later');
+    return;
   }
 
-  const clicked = await clickOverflowMenuItem(overflowBtn, findOverflowSaveItem);
-  if (!clicked) {
-    warnOnceMiss("overflow-save-item", '"Save" item not found in overflow menu');
-    return false;
+  if (isInWL) {
+    await removeWLId(videoId);
+  } else {
+    await addWLId(videoId);
   }
-
-  return true;
 }
