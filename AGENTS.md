@@ -1,12 +1,13 @@
 ## Learned User Preferences
 
-- Prefer a principal-engineer bar: lean, easy-to-reason-about code; avoid unnecessary fallbacks, loose `unknown`/`as` casting, and “just in case” branches—one clear fallback is enough when it is truly needed.
+- Prefer a principal-engineer bar: lean, easy-to-reason-about code; avoid unnecessary fallbacks, loose `unknown`/`as` casting, and "just in case" branches—one clear fallback is enough when it is truly needed.
 - Use **pnpm** for package installs and script invocations in this repository.
 - Open to better approaches than the first idea suggested in chat; searching the web or proposing alternatives is welcome when it improves the outcome.
 - User-visible strings (popup module titles/descriptions and similar) should stay short and benefit-oriented for everyday users, not technical explanations of implementation.
 - Prefer the simplest workable approach for hover, layout, and visibility (CSS-first or small DOM/CSS changes) over JS that fires routinely on pointer movement when the goal can be met without it.
 - For YouTube feed/card UI or selectors, confirm structure against the live page (Chrome DevTools or a connected browser MCP) rather than guessing class names or DOM shape.
-- Shared YouTube/DOM helpers should not emit generic internal logs on failure where the caller’s module/feature context would blur; return errors or `null` and let the feature module log with its own tag so diagnostics show which feature failed.
+- Shared YouTube/DOM helpers should not emit generic internal logs on failure where the caller's module/feature context would blur; return errors or `null` and let the feature module log with its own tag so diagnostics show which feature failed.
+- When something surfaces during a chat that should be done later, ask the user and append it to `todos.md` in the workspace root.
 
 ## Learned Workspace Facts
 

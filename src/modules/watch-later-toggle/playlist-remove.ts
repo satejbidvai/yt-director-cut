@@ -1,4 +1,5 @@
 import { overlayIcon } from '../../framework/styles';
+import { waitFor } from '../../shared/dom-utils';
 import { clickOverflowMenuItem } from '../../shared/overflow-menu';
 import {
   PLAYLIST_ITEM_SELECTOR,
@@ -59,16 +60,18 @@ function processAllItems(): void {
   document.querySelectorAll(PLAYLIST_ITEM_SELECTOR).forEach(processItem);
 }
 
-export function startWLObserver(): void {
+export async function startWLObserver(): Promise<void> {
   stopObserver();
-  processAllItems();
 
-  const container = findWLPlaylistContainer();
-  if (!container) {
+  let container: Element;
+  try {
+    container = await waitFor(document, findWLPlaylistContainer);
+  } catch {
     warnOnceMiss('wl-playlist-container', 'could not find WL playlist container to observe');
     return;
   }
 
+  processAllItems();
   observer = new MutationObserver(() => processAllItems());
   observer.observe(container, { childList: true, subtree: true });
 }
