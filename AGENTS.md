@@ -8,6 +8,7 @@
 - For YouTube feed/card UI or selectors, confirm structure against the live page (Chrome DevTools or a connected browser MCP) rather than guessing class names or DOM shape.
 - Shared YouTube/DOM helpers should not emit generic internal logs on failure where the caller's module/feature context would blur; return errors or `null` and let the feature module log with its own tag so diagnostics show which feature failed.
 - When something surfaces during a chat that should be done later, ask the user and append it to `todos.md` in the workspace root.
+- Avoid cringe or AI-flavored marketing language in user-facing copy; prefer short, plain phrasing (e.g. dislikes words like "tame" and generic "minimal, opinionated" pitch lines).
 
 ## Learned Workspace Facts
 
@@ -18,3 +19,6 @@
 - Development uses Vite watch builds; after code changes, reload the unpacked extension in Chrome—expect **reload/rebuild**, not full hot reload of injected extension code like a normal web app.
 - **Icons:** SVG sources live in `icons/`; after changes, re-rasterize PNGs with **sharp** via `pnpx`.
 - **`not-interested`** (`src/modules/not-interested/`) adds a home-feed control that invokes YouTube **Not interested** through the overflow menu; **`watch-later-toggle`** is the reference pattern for comparable menu automation.
+- **`pnpm build:prod`** outputs to **`dist-prod/`** so a production unpacked load can sit beside **`pnpm dev`**, which uses **`dist/`** (CRXJS otherwise overwrites the same output folder depending on which command ran last).
+- Default MV3 content scripts run in an **isolated world**: page JS globals like **`ytcfg` are not available** to the extension; derive InnerTube/bootstrap values from **DOM-visible inline scripts** (e.g. `ytcfg.set` payloads), not `ytcfg.get()` from the content script.
+- When **`yt-navigate-finish`** fires before the needed subtree exists, **`waitFor`** in **`src/shared/dom-utils.ts`** is the standard bounded wait (avoid a single synchronous `querySelector` miss on home feed, WL playlist, etc.).
