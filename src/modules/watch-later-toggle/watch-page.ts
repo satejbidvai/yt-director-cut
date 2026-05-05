@@ -1,7 +1,7 @@
 import { yt, pill } from '../../framework/styles';
 import { findActionRow, warnOnceMiss } from './selectors';
-import { addWLId, removeWLId, getWLIds, onWLChange } from '../../shared/wl-store';
-import { addToWatchLater, removeFromWatchLater } from '../../shared/yt-action';
+import { getWLIds, onWLChange } from '../../shared/wl-store';
+import { toggleWatchLater } from '../../shared/wl-toggle';
 
 const BUTTON_ID = 'redline-watch-later-button';
 const BUTTON_LABEL = 'Later';
@@ -150,35 +150,22 @@ function buildButton(): HTMLButtonElement {
     ev.stopPropagation();
     if (btn.disabled) return;
     btn.disabled = true;
-    toggleWatchLater(btn).finally(() => {
+    handleToggleClick(btn).finally(() => {
       btn.disabled = false;
     });
   });
   return btn;
 }
 
-async function toggleWatchLater(btn: HTMLButtonElement): Promise<void> {
+async function handleToggleClick(btn: HTMLButtonElement): Promise<void> {
   const videoId = new URL(location.href).searchParams.get('v');
   if (!videoId) return;
 
-  const ids = await getWLIds();
-  const isInWL = ids.includes(videoId);
+  const ok = await toggleWatchLater(videoId, (saved) => {
+    updateIcon(btn, saved);
+  });
 
-  const dispatched = isInWL
-    ? removeFromWatchLater(videoId)
-    : addToWatchLater(videoId);
-
-  if (!dispatched) {
+  if (!ok) {
     warnOnceMiss('ytd-app', 'ytd-app element not found — cannot toggle Watch Later');
-    return;
-  }
-
-  // Optimistic icon flip before the async store write settles.
-  updateIcon(btn, !isInWL);
-
-  if (isInWL) {
-    await removeWLId(videoId);
-  } else {
-    await addWLId(videoId);
   }
 }

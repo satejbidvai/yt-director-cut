@@ -67,3 +67,32 @@ export function extractVideoIdFromItem(item: Element): string | null {
     return null;
   }
 }
+
+// --- Home feed selectors (pathname === '/') ---
+
+export const FEED_CARD_SELECTOR = 'ytd-rich-item-renderer';
+export const FEED_WL_PROCESSED_ATTR = 'data-redline-wl-feed';
+
+/** The home feed grid container to observe for new cards. */
+export function findFeedContainer(): Element | null {
+  return (
+    document.querySelector('ytd-rich-grid-renderer #contents') ??
+    document.querySelector('ytd-rich-grid-renderer')
+  );
+}
+
+/** The menu button wrapper used as insertion reference on a feed card. */
+export function findCardMenuContainer(card: Element): HTMLElement | null {
+  return card.querySelector<HTMLElement>('.ytLockupMetadataViewModelMenuButton');
+}
+
+/** Extract the video ID from a feed card's watch link. */
+export function extractVideoIdFromCard(card: Element): string | null {
+  const link = card.querySelector<HTMLAnchorElement>('a[href*="/watch?v="]');
+  if (!link) return null;
+  try {
+    return new URL(link.href).searchParams.get('v');
+  } catch {
+    return null;
+  }
+}
