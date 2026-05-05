@@ -1,40 +1,71 @@
 # Redline
 
-A personal Chrome extension for desktop YouTube. Designed as a small, growable
-collection of feature modules. The first shipping feature is a **Watch Later
-toggle** — a one-click button anchored next to the native Save button on every
-watch page.
+A Chrome extension that fixes the small things YouTube won't.
 
-## Install (sideload)
+<!-- TODO: hero GIF showing the popup + a feature in action -->
 
-1. `pnpm install`
-2. `pnpm build`
-3. Open `chrome://extensions`, enable **Developer mode**, click **Load unpacked**,
-   and pick the generated `dist/` directory.
-4. Open a watch page on `www.youtube.com` — a **Watch Later** pill should appear
-   in the action row.
+## Features
 
-## Dev loop
+Every feature can be toggled independently from the extension popup.
+
+### Watch Later Toggle
+
+One-click add/remove from the watch page — no menu diving, no playlist panel.
+
+<!-- TODO: GIF -->
+
+### Hide Already-Saved Videos
+
+Videos already in your Watch Later playlist are automatically hidden from the home feed.
+
+<!-- TODO: GIF -->
+
+### Not Interested
+
+A single button on every home feed card to trigger "Not interested" instantly — no right-click, no overflow menu.
+
+<!-- TODO: GIF -->
+
+### Caption Style
+
+Bolder, more readable captions with text shadow and a semi-transparent background. Sized appropriately for feed previews vs. the watch page.
+
+<!-- TODO: GIF -->
+
+## How it works
+
+YouTube is a single-page Polymer app — normal page-load events never fire on navigation. Watch Later has no public API (the Data API returns `playlistOperationUnsupported`). Redline works by listening to YouTube's internal navigation events and automating the native UI where needed.
+
+## Install
+
+Requires [Node.js](https://nodejs.org/) and [pnpm](https://pnpm.io/).
 
 ```sh
-pnpm dev        # Vite + CRXJS with HMR for content scripts
-pnpm typecheck  # tsc --noEmit
-pnpm build      # production build into dist/
+git clone https://github.com/user/redline.git
+cd redline
+pnpm install
+pnpm build
 ```
 
-For HMR to update the running extension, load `dist/` once after the first
-build; subsequent edits are pushed via the Vite dev server.
+Then load it into Chrome:
 
-## Architecture in one screen
+1. Open `chrome://extensions`
+2. Enable **Developer mode** (top-right toggle)
+3. Click **Load unpacked**
+4. Select the generated `dist/` folder
 
-Every feature is a `FeatureModule`:
+Open any page on `www.youtube.com` — features are active by default and toggleable from the toolbar popup.
+
+## Architecture
+
+Redline uses a lightweight module system. Each feature is a self-contained `FeatureModule`:
 
 ```ts
 type FeatureModule = {
-  id: string;            // unique key, used in chrome.storage.sync
-  name: string;          // shown in the popup
-  description?: string;  // optional, shown in the popup
-  enable(ctx: ModuleContext): () => void;  // returns cleanup
+  id: string;
+  name: string;
+  description?: string;
+  enable(ctx: ModuleContext): () => void; // returns cleanup
 };
 
 type ModuleContext = {
@@ -42,55 +73,27 @@ type ModuleContext = {
 };
 ```
 
-The framework owns:
-
-- A single `yt-navigate-finish` listener that fans out to every module's
-  navigation handlers (and fires once on bootstrap with the current URL).
-- `chrome.storage.sync`-backed feature toggles under the `featureToggles` key
-  (default-on: a missing entry means enabled).
-- A lifecycle that calls `enable(ctx)` when a module is on and the cleanup
-  function it returned when it's flipped off.
-
-To add a feature:
-
-1. Create `src/modules/<your-feature>/index.ts` exporting a `FeatureModule`.
-2. Co-locate selectors in `src/modules/<your-feature>/selectors.ts` and prefer
-   custom-element tag names and `aria-label` attributes over class names.
-3. Register your module in `src/framework/registry.ts`.
-
-## Layout
+`enable()` receives a context and returns a cleanup function. The framework calls cleanup when the feature is toggled off — all teardown is co-located with setup.
 
 ```
 src/
-  content.ts                          # entry: imports registry, calls bootstrap
+  content.ts              — entry point, bootstraps all modules
+  background.ts           — service worker (MV3 requirement, currently a stub)
   framework/
-    types.ts                          # FeatureModule, ModuleContext
-    registry.ts                       # static modules array (asserts unique ids)
-    storage.ts                        # featureToggles read/write/subscribe
-    navigation.ts                     # one yt-navigate-finish dispatcher
-    lifecycle.ts                      # bootstrap(modules), per-module ctx, toggle reaction
+    types.ts              — FeatureModule, ModuleContext interfaces
+    registry.ts           — static module list (asserts unique IDs)
+    lifecycle.ts          — bootstrap, per-module context, toggle reactions
+    navigation.ts         — single yt-navigate-finish dispatcher
+    storage.ts            — chrome.storage.sync read/write/subscribe
+    styles.ts             — shared YouTube CSS variable tokens
+    style-injection.ts    — managed <style> injection with dispose
   modules/
-    watch-later-toggle/
-      index.ts                        # FeatureModule + click choreography
-      selectors.ts                    # all DOM selectors, findOrWarn helper
-      dom-utils.ts                    # waitFor / waitForGone via MutationObserver
-  popup/
-    index.html
-    popup.ts                          # renders one checkbox per module
-    popup.css
-manifest.json                         # MV3, host_permissions: www.youtube.com
-vite.config.ts                        # @crxjs/vite-plugin
+    watch-later-toggle/   — watch page pill + playlist page remove buttons
+    caption-style/        — pure CSS caption restyling
+    hide-playlist-feed/   — hides already-saved videos from home feed
+    not-interested/       — one-click "Not interested" on feed cards
+  shared/                 — cross-module helpers (WL store, overflow menu, etc.)
+  popup/                  — toolbar popup UI (one toggle per feature)
 ```
 
-## Permissions
-
-- `host_permissions`: `*://www.youtube.com/*` (desktop only — `m.youtube.com`
-  has a different DOM and is out of scope).
-- `permissions`: `storage`. No `tabs`, `activeTab`, or `scripting`.
-
-## Caveats
-
-YouTube ships DOM changes regularly. Selectors are the load-bearing maintenance
-surface; expect the occasional one-file patch under `src/modules/<feature>/selectors.ts`.
-On a selector miss the module logs a single `console.warn` per session and
-renders nothing — there is no user-facing error toast in v1.
+For deeper context on YouTube's SPA behavior, selector strategy, and module internals, see [CONTEXT.md](./CONTEXT.md).
