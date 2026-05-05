@@ -27,11 +27,11 @@ export const homeFeedStyles = `
   .${BUTTON_CLASS} {
     position: absolute;
     top: -6px;
-    right: 56px;
+    right: 52px;
   }
   /* When not-interested is absent, shift closer to the menu button. */
   ${FEED_CARD_SELECTOR}:not([data-redline-ni]) .${BUTTON_CLASS} {
-    right: 26px;
+    right: 20px;
   }`;
 
 let observer: MutationObserver | null = null;

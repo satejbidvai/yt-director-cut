@@ -34,7 +34,7 @@ export const notInterestedModule: FeatureModule = {
       .${BUTTON_CLASS} {
         position: absolute;
         top: -6px;
-        right: 26px;
+        right: 20px;
       }
     `);
 

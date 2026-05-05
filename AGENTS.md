@@ -19,6 +19,7 @@
 - Development uses Vite watch builds; after code changes, reload the unpacked extension in Chrome—expect **reload/rebuild**, not full hot reload of injected extension code like a normal web app.
 - **Icons:** SVG sources live in `icons/`; after changes, re-rasterize PNGs with **sharp** via `pnpx`.
 - **`not-interested`** (`src/modules/not-interested/`) adds a home-feed control that invokes YouTube **Not interested** through the overflow menu; **`watch-later-toggle`** is the reference pattern for comparable menu automation.
+- Popup **module groups** live in **`src/framework/groups.ts`** (`moduleGroups` with id/name/description plus typed **`ModuleGroupId`**); modules opt in with **`FeatureModule.group`** matching a registry id (not ad hoc strings).
 - **`pnpm build:prod`** outputs to **`dist-prod/`** so a production unpacked load can sit beside **`pnpm dev`**, which uses **`dist/`** (CRXJS otherwise overwrites the same output folder depending on which command ran last).
 - Default MV3 content scripts run in an **isolated world**: page JS globals like **`ytcfg` are not available** to the extension; derive InnerTube/bootstrap values from **DOM-visible inline scripts** (e.g. `ytcfg.set` payloads), not `ytcfg.get()` from the content script.
 - When **`yt-navigate-finish`** fires before the needed subtree exists, **`waitFor`** in **`src/shared/dom-utils.ts`** is the standard bounded wait (avoid a single synchronous `querySelector` miss on home feed, WL playlist, etc.).
