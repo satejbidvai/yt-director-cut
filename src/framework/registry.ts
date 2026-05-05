@@ -3,12 +3,14 @@ import { watchLaterToggleModule } from "../modules/watch-later-toggle";
 import { captionStyleModule } from "../modules/caption-style";
 import { hidePlaylistFeedModule } from "../modules/hide-playlist-feed";
 import { notInterestedModule } from "../modules/not-interested";
+import { hideMixesModule } from "../modules/hide-mixes";
 
 export const modules: FeatureModule[] = [
   watchLaterToggleModule,
   captionStyleModule,
   hidePlaylistFeedModule,
   notInterestedModule,
+  hideMixesModule,
 ];
 
 const seen = new Set<string>();
