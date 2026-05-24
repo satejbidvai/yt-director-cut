@@ -68,6 +68,22 @@ export function extractVideoIdFromItem(item: Element): string | null {
   }
 }
 
+// --- Masthead header selectors ---
+
+const HEADER_BUTTONS_SELECTOR = 'ytd-masthead #end #buttons';
+
+/** The right-side button container in YouTube's top masthead. */
+export function findHeaderButtonContainer(): HTMLElement | null {
+  return document.querySelector<HTMLElement>(HEADER_BUTTONS_SELECTOR);
+}
+
+const NOTIFICATION_BUTTON_SELECTOR = 'ytd-notification-topbar-button-renderer';
+
+/** The notification bell button in the masthead. */
+export function findNotificationButton(root: ParentNode): Element | null {
+  return root.querySelector(NOTIFICATION_BUTTON_SELECTOR);
+}
+
 // --- Home feed selectors (pathname === '/') ---
 
 export const FEED_CARD_SELECTOR = 'ytd-rich-item-renderer';

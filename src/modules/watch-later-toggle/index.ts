@@ -3,6 +3,7 @@ import { injectStyles } from '../../framework/style-injection';
 import { injectButton, removeInjectedButton, watchPageStyles } from './watch-page';
 import { startWLObserver, cleanupWLButtons, playlistRemoveStyles } from './playlist-remove';
 import { startHomeFeedObserver, cleanupHomeFeedButtons, homeFeedStyles } from './home-feed';
+import { injectHeaderLink, cleanupHeaderLink, headerLinkStyles } from './header-link';
 
 export const watchLaterToggleModule: FeatureModule = {
   id: 'watch-later-toggle',
@@ -13,8 +14,10 @@ export const watchLaterToggleModule: FeatureModule = {
     let cleanupFullscreenListener: (() => void) | null = null;
 
     const disposeStyles = injectStyles(
-      watchPageStyles + playlistRemoveStyles + homeFeedStyles,
+      watchPageStyles + playlistRemoveStyles + homeFeedStyles + headerLinkStyles,
     );
+
+    void injectHeaderLink(() => cancelled);
 
     const handleNavigation = (url: URL) => {
       removeInjectedButton();
@@ -53,6 +56,7 @@ export const watchLaterToggleModule: FeatureModule = {
       removeInjectedButton();
       cleanupWLButtons();
       cleanupHomeFeedButtons();
+      cleanupHeaderLink();
       cleanupFullscreenListener?.();
       cleanupFullscreenListener = null;
       disposeStyles();
