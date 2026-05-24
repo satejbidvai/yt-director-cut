@@ -6,11 +6,10 @@ import { toggleWatchLater } from '../../shared/wl-toggle';
 const BUTTON_ID = 'redline-watch-later-button';
 const BUTTON_LABEL = 'Later';
 
-// Copied from YouTube's Save button DOM — outline (not saved) and filled (saved).
 // margin-left:-6px matches YouTube's icon inset; margin-right:6px is the icon–text gap.
 const ICON_STYLE = 'pointer-events:none;display:block;flex-shrink:0;margin-left:-6px;margin-right:6px';
-const BOOKMARK_OUTLINE_SVG = `<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24" fill="currentColor" aria-hidden="true" style="${ICON_STYLE}"><path d="M19 2H5a2 2 0 00-2 2v16.887c0 1.266 1.382 2.048 2.469 1.399L12 18.366l6.531 3.919c1.087.652 2.469-.131 2.469-1.397V4a2 2 0 00-2-2ZM5 20.233V4h14v16.233l-6.485-3.89-.515-.309-.515.309L5 20.233Z"></path></svg>`;
-const BOOKMARK_FILLED_SVG = `<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24" fill="currentColor" aria-hidden="true" style="${ICON_STYLE}"><path d="M19 2H5a2 2 0 00-2 2v16.887c0 1.266 1.382 2.048 2.469 1.399L12 18.366l6.531 3.919c1.087.652 2.469-.131 2.469-1.397V4a2 2 0 00-2-2Z"></path></svg>`;
+const CLOCK_OUTLINE_SVG = `<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24" fill="currentColor" aria-hidden="true" style="${ICON_STYLE}"><path d="M12 1C5.925 1 1 5.925 1 12s4.925 11 11 11 11-4.925 11-11S18.075 1 12 1Zm0 2a9 9 0 110 18.001A9 9 0 0112 3Zm0 3a1 1 0 00-1 1v5.565l.485.292 3.33 2a1 1 0 001.03-1.714L13 11.435V7a1 1 0 00-1-1Z"></path></svg>`;
+const CLOCK_FILLED_SVG = `<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24" fill="currentColor" aria-hidden="true" style="${ICON_STYLE}"><path fill-rule="evenodd" d="M12 1C5.925 1 1 5.925 1 12s4.925 11 11 11 11-4.925 11-11S18.075 1 12 1Zm0 5a1 1 0 00-1 1v5.565l.485.292 3.33 2a1 1 0 001.03-1.714L13 11.435V7a1 1 0 00-1-1Z"></path></svg>`;
 
 export const watchPageStyles = `
   #${BUTTON_ID}:hover:not(:disabled) {
@@ -113,7 +112,7 @@ function updateIcon(btn: HTMLButtonElement, isSaved: boolean): void {
   const svg = btn.querySelector('svg');
   if (svg) {
     const temp = document.createElement('template');
-    temp.innerHTML = isSaved ? BOOKMARK_FILLED_SVG : BOOKMARK_OUTLINE_SVG;
+    temp.innerHTML = isSaved ? CLOCK_FILLED_SVG : CLOCK_OUTLINE_SVG;
     svg.replaceWith(temp.content.firstChild!);
   }
 }
@@ -143,7 +142,7 @@ function buildButton(): HTMLButtonElement {
     verticalAlign: "top",
   } satisfies Partial<CSSStyleDeclaration>);
 
-  btn.innerHTML = `${BOOKMARK_OUTLINE_SVG}<span>${BUTTON_LABEL}</span>`;
+  btn.innerHTML = `${CLOCK_OUTLINE_SVG}<span>${BUTTON_LABEL}</span>`;
 
   btn.addEventListener('click', (ev) => {
     ev.preventDefault();
