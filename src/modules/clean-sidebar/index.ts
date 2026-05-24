@@ -12,8 +12,8 @@ const SIDEBAR_CSS = `
     display: none !important;
   }
 
-  /* Subscriptions entry */
-  ytd-guide-renderer ytd-guide-entry-renderer:has(a[title="Subscriptions"]) {
+  /* Entire Subscriptions section (header + channel list + show more) */
+  ytd-guide-section-renderer:has(a[title="Subscriptions"]) {
     display: none !important;
   }
 
@@ -22,13 +22,19 @@ const SIDEBAR_CSS = `
     display: none !important;
   }
 
+  /* Your channel + Your videos entries */
+  ytd-guide-entry-renderer:has(a[title="Your channel"]),
+  ytd-guide-entry-renderer:has(a[title="Your videos"]) {
+    display: none !important;
+  }
+
   /* Explore section */
   ytd-guide-section-renderer:has(a[title="Shopping"]) {
     display: none !important;
   }
 
-  /* More from YouTube section */
-  ytd-guide-section-renderer:has(a[title="YouTube Premium"]) {
+  /* More from YouTube section (varies by region: Kids, Premium, Music) */
+  ytd-guide-section-renderer:has(a[title="YouTube Premium"], a[title="YouTube Kids"], a[title="YouTube Music"]) {
     display: none !important;
   }
 
