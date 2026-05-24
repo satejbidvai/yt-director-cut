@@ -1,0 +1,200 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-05-24T08:35:00Z",
+  "title": "Design System: YouTube Extension",
+  "extensions": {
+    "colorMeta": {
+      "accent": {
+        "role": "primary",
+        "displayName": "Signal Red",
+        "canonical": "oklch(63.7% 0.196 25.5)",
+        "tonalRamp": [
+          "oklch(25% 0.08 25.5)",
+          "oklch(35% 0.12 25.5)",
+          "oklch(45% 0.16 25.5)",
+          "oklch(55% 0.18 25.5)",
+          "oklch(63.7% 0.196 25.5)",
+          "oklch(75% 0.14 25.5)",
+          "oklch(85% 0.08 25.5)",
+          "oklch(95% 0.03 25.5)"
+        ]
+      },
+      "surface-light": {
+        "role": "neutral",
+        "displayName": "Surface Light",
+        "canonical": "oklch(100% 0 0)",
+        "tonalRamp": []
+      },
+      "surface-dark": {
+        "role": "neutral",
+        "displayName": "Surface Dark",
+        "canonical": "oklch(18% 0.005 0)",
+        "tonalRamp": []
+      },
+      "text-light": {
+        "role": "neutral",
+        "displayName": "Text Light",
+        "canonical": "oklch(12% 0.005 0)",
+        "tonalRamp": []
+      },
+      "text-dark": {
+        "role": "neutral",
+        "displayName": "Text Dark",
+        "canonical": "oklch(93% 0.005 0)",
+        "tonalRamp": []
+      },
+      "muted-light": {
+        "role": "neutral",
+        "displayName": "Muted Light",
+        "canonical": "oklch(50% 0.005 0)",
+        "tonalRamp": []
+      },
+      "muted-dark": {
+        "role": "neutral",
+        "displayName": "Muted Dark",
+        "canonical": "oklch(62% 0.005 0)",
+        "tonalRamp": []
+      },
+      "logo-red": {
+        "role": "primary",
+        "displayName": "Slash Red",
+        "canonical": "oklch(62% 0.26 28)",
+        "tonalRamp": [
+          "oklch(25% 0.10 28)",
+          "oklch(35% 0.15 28)",
+          "oklch(45% 0.20 28)",
+          "oklch(55% 0.24 28)",
+          "oklch(62% 0.26 28)",
+          "oklch(75% 0.16 28)",
+          "oklch(85% 0.08 28)",
+          "oklch(95% 0.03 28)"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "title": {
+        "displayName": "Title",
+        "purpose": "Popup header wordmark only."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Module names in the popup. Primary readable size."
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "Module descriptions. Muted color reinforces subordinate role."
+      },
+      "group-title": {
+        "displayName": "Group Title",
+        "purpose": "Section headers within module groups."
+      }
+    },
+    "shadows": [],
+    "motion": [
+      {
+        "name": "state-transition",
+        "value": "150ms ease-out",
+        "purpose": "Toggle track/knob, row hover background."
+      },
+      {
+        "name": "hover-bg",
+        "value": "120ms ease",
+        "purpose": "Module row hover background fill."
+      },
+      {
+        "name": "overlay-reveal",
+        "value": "200ms ease",
+        "purpose": "YouTube overlay icon opacity on parent hover."
+      }
+    ],
+    "breakpoints": []
+  },
+  "components": [
+    {
+      "name": "Toggle Switch",
+      "kind": "input",
+      "refersTo": "toggle-track",
+      "description": "iOS-style toggle for enabling/disabling modules. Standard size for ungrouped, compact for grouped.",
+      "html": "<div class=\"ds-toggle\"><input type=\"checkbox\" id=\"ds-demo\" checked /><label class=\"ds-toggle-track\" for=\"ds-demo\"></label><span class=\"ds-toggle-knob\"></span></div>",
+      "css": ".ds-toggle { position: relative; width: 36px; height: 20px; } .ds-toggle input { position: absolute; opacity: 0; width: 0; height: 0; } .ds-toggle-track { display: block; width: 36px; height: 20px; border-radius: 10px; background: #cccccc; cursor: pointer; transition: background 150ms ease-out; } .ds-toggle-knob { display: block; position: absolute; top: 2px; left: 2px; width: 16px; height: 16px; border-radius: 50%; background: #ffffff; transition: transform 150ms ease-out; pointer-events: none; } .ds-toggle input:checked + .ds-toggle-track { background: #e5484d; } .ds-toggle input:checked ~ .ds-toggle-knob { transform: translateX(16px); }"
+    },
+    {
+      "name": "Module Row",
+      "kind": "card",
+      "refersTo": "module-row",
+      "description": "Settings row for a single module: name, description, and toggle.",
+      "html": "<li class=\"ds-module-row\"><label><span class=\"ds-name\">Watch Later</span><span class=\"ds-description\">One-click save from the watch page</span></label><div class=\"ds-toggle\"><input type=\"checkbox\" id=\"ds-demo-row\" checked /><label class=\"ds-toggle-track\" for=\"ds-demo-row\"></label><span class=\"ds-toggle-knob\"></span></div></li>",
+      "css": ".ds-module-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px; border-radius: 8px; transition: background 120ms ease; list-style: none; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; color: #0f0f0f; } .ds-module-row:hover { background: rgba(0,0,0,0.06); } .ds-module-row label { flex: 1; cursor: pointer; min-width: 0; } .ds-name { display: block; font-weight: 400; font-size: 13.5px; line-height: 1.3; } .ds-description { display: block; margin-top: 2px; color: #6b6b6b; font-size: 11.5px; line-height: 1.35; } .ds-toggle { position: relative; flex-shrink: 0; width: 36px; height: 20px; } .ds-toggle input { position: absolute; opacity: 0; width: 0; height: 0; } .ds-toggle-track { display: block; width: 36px; height: 20px; border-radius: 10px; background: #cccccc; cursor: pointer; transition: background 150ms ease-out; } .ds-toggle-knob { display: block; position: absolute; top: 2px; left: 2px; width: 16px; height: 16px; border-radius: 50%; background: #ffffff; transition: transform 150ms ease-out; pointer-events: none; } .ds-toggle input:checked + .ds-toggle-track { background: #e5484d; } .ds-toggle input:checked ~ .ds-toggle-knob { transform: translateX(16px); }"
+    },
+    {
+      "name": "Pill Button (YouTube)",
+      "kind": "button",
+      "refersTo": "pill-button",
+      "description": "Chip-style button injected into YouTube's watch page action row.",
+      "html": "<button class=\"ds-pill-btn\"><svg width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"currentColor\"><path d=\"M12 3.67c-4.58 0-8.33 3.75-8.33 8.33s3.75 8.33 8.33 8.33 8.33-3.75 8.33-8.33S16.58 3.67 12 3.67zm3.33 9.17h-2.5v2.5h-1.67v-2.5H8.67v-1.67h2.5v-2.5h1.67v2.5h2.5v1.67z\"/></svg> Watch Later</button>",
+      "css": ".ds-pill-btn { display: inline-flex; align-items: center; gap: 6px; height: 36px; padding: 0 16px; border: none; border-radius: 18px; background: rgba(255,255,255,0.1); color: rgb(241,241,241); font: 500 14px/36px Roboto, Arial, sans-serif; cursor: pointer; transition: background 0.2s; } .ds-pill-btn:hover { background: rgba(255,255,255,0.2); } .ds-pill-btn:focus-visible { outline: 2px solid rgba(255,255,255,0.4); outline-offset: 2px; } .ds-pill-btn svg { width: 20px; height: 20px; }"
+    },
+    {
+      "name": "Overlay Icon Button (YouTube)",
+      "kind": "button",
+      "refersTo": "overlay-icon",
+      "description": "Circular icon button on feed cards, revealed on parent hover.",
+      "html": "<button class=\"ds-overlay-icon\"><svg width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"currentColor\"><path d=\"M12 3.67c-4.58 0-8.33 3.75-8.33 8.33s3.75 8.33 8.33 8.33 8.33-3.75 8.33-8.33S16.58 3.67 12 3.67zm3.33 9.17h-2.5v2.5h-1.67v-2.5H8.67v-1.67h2.5v-2.5h1.67v2.5h2.5v1.67z\"/></svg></button>",
+      "css": ".ds-overlay-icon { display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; padding: 0; border: none; border-radius: 18px; background: transparent; color: rgb(241,241,241); cursor: pointer; opacity: 1; transition: opacity 0.2s, background 0.2s; } .ds-overlay-icon:hover { background: rgba(255,255,255,0.1); } .ds-overlay-icon:focus-visible { opacity: 1; outline: 2px solid rgba(255,255,255,0.4); outline-offset: 2px; } .ds-overlay-icon svg { width: 20px; height: 20px; }"
+    },
+    {
+      "name": "Group Header",
+      "kind": "nav",
+      "refersTo": "group-header",
+      "description": "Section divider in the popup separating module groups.",
+      "html": "<li class=\"ds-group-header\"><span class=\"ds-group-name\">Minimalist YouTube</span><span class=\"ds-group-desc\">Strip away distractions from your feed</span></li>",
+      "css": ".ds-group-header { padding: 12px 10px 4px; list-style: none; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; } .ds-group-name { display: block; font-weight: 600; font-size: 12.5px; line-height: 1.3; letter-spacing: 0.01em; color: #0f0f0f; } .ds-group-desc { display: block; margin-top: 1px; color: #6b6b6b; font-size: 11px; line-height: 1.35; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Pit Crew",
+    "overview": "Fast, practiced, in-and-out before you notice. Every feature exists to remove friction from YouTube, not to announce itself. The visual system has two distinct layers: the popup (an owned settings surface using system fonts and the extension's own tokens) and YouTube-embedded UI (injected elements that borrow YouTube's CSS custom properties and mimic native controls). These layers never cross; the popup never looks like YouTube, and injected UI never looks like the popup.\n\nThe extension ships opinionated defaults and minimal configuration. A toggle is the most complex control any module needs. If a feature can't render, it shows nothing rather than a broken state. The visual language follows YouTube's lead inside the page and stays restrained in the popup.",
+    "keyCharacteristics": [
+      "Two-layer visual system: popup tokens vs YouTube's --yt-spec-* variables",
+      "System font stack throughout the popup; Roboto for injected UI",
+      "Single accent color used sparingly: toggle on-state and the wordmark highlight",
+      "Dark/light follows prefers-color-scheme automatically",
+      "Flat surfaces, no shadows, no elevation hierarchy"
+    ],
+    "rules": [
+      {
+        "name": "The Borrowed Palette Rule",
+        "body": "YouTube-embedded UI never carries the extension's own colors into the page. It uses var(--yt-spec-badge-chip-background), var(--yt-spec-text-primary), and YouTube's native values exclusively. The extension's accent red stays in the popup.",
+        "section": "colors"
+      },
+      {
+        "name": "The Two-Stack Rule",
+        "body": "System font in the popup, Roboto in YouTube. Never mix them.",
+        "section": "typography"
+      },
+      {
+        "name": "The No-Shadow Rule",
+        "body": "Shadows are prohibited. If a surface needs to feel elevated, use a subtle background tint or opacity shift.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "Do use YouTube's CSS custom properties (--yt-spec-*) for all injected UI.",
+      "Do use the system font stack for all popup text.",
+      "Do keep the accent red below 10% of any popup screen.",
+      "Do use opacity and background-tint transitions for state changes.",
+      "Do prefix injected element IDs with redline- to avoid collisions.",
+      "Do use prefers-color-scheme for popup theming."
+    ],
+    "donts": [
+      "Don't bring the popup's accent color into YouTube's page.",
+      "Don't add shadows, gradients, or blur effects.",
+      "Don't use bounce or elastic easing. Transitions are ease-out or ease, 120-200ms.",
+      "Don't build settings pages, option tabs, or preference panels.",
+      "Don't add gamification patterns: streaks, badges, progress bars.",
+      "Don't use neon colors, playful animations, or emoji in UI copy.",
+      "Don't style injected YouTube UI to look like the popup.",
+      "Don't use #000000 or #ffffff as backgrounds."
+    ]
+  }
+}
