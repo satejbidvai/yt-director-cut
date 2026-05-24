@@ -10,6 +10,7 @@ export const watchLaterToggleModule: FeatureModule = {
   description: 'Save and remove videos with one click',
   enable(ctx) {
     let cancelled = false;
+    let cleanupFullscreenListener: (() => void) | null = null;
 
     const disposeStyles = injectStyles(
       watchPageStyles + playlistRemoveStyles + homeFeedStyles,
@@ -19,10 +20,22 @@ export const watchLaterToggleModule: FeatureModule = {
       removeInjectedButton();
       cleanupWLButtons();
       cleanupHomeFeedButtons();
+      cleanupFullscreenListener?.();
+      cleanupFullscreenListener = null;
       if (cancelled) return;
 
       if (url.pathname === '/watch') {
         void injectButton(() => cancelled);
+
+        const onFullscreenChange = () => {
+          if (document.fullscreenElement || cancelled) return;
+          removeInjectedButton();
+          void injectButton(() => cancelled);
+        };
+        document.addEventListener('fullscreenchange', onFullscreenChange);
+        cleanupFullscreenListener = () => {
+          document.removeEventListener('fullscreenchange', onFullscreenChange);
+        };
       } else if (
         url.pathname === '/playlist' &&
         url.searchParams.get('list') === 'WL'
@@ -40,6 +53,8 @@ export const watchLaterToggleModule: FeatureModule = {
       removeInjectedButton();
       cleanupWLButtons();
       cleanupHomeFeedButtons();
+      cleanupFullscreenListener?.();
+      cleanupFullscreenListener = null;
       disposeStyles();
     };
   }
