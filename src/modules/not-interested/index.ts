@@ -1,6 +1,7 @@
 import type { FeatureModule } from '../../framework/types';
 import { overlayIcon } from '../../framework/styles';
 import { injectStyles } from '../../framework/style-injection';
+import { waitFor } from '../../shared/dom-utils';
 import { clickOverflowMenuItem } from '../../shared/overflow-menu';
 import {
   CARD_SELECTOR,
@@ -73,16 +74,19 @@ export const notInterestedModule: FeatureModule = {
       cards.forEach(processCard);
     }
 
-    function startObserving(): void {
+    async function startObserving(): Promise<void> {
       stopObserving();
-      processAllCards();
 
-      const container = findFeedContainer();
-      if (!container) {
+      let container: Element;
+      try {
+        container = await waitFor(document, findFeedContainer);
+      } catch {
         warnOnceMiss('feed-container', 'could not find feed grid to observe');
         return;
       }
+      if (cancelled) return;
 
+      processAllCards();
       observer = new MutationObserver(() => processAllCards());
       observer.observe(container, { childList: true, subtree: true });
     }
@@ -96,7 +100,7 @@ export const notInterestedModule: FeatureModule = {
       stopObserving();
       if (cancelled) return;
       if (url.pathname !== '/') return;
-      startObserving();
+      void startObserving();
     });
 
     return () => {
