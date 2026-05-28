@@ -17,7 +17,7 @@
 - **CONTEXT.md** is the canonical document for human and AI context: product purpose, YouTube SPA behavior (`yt-navigate-finish`), Watch Later constraints, selector strategy, and architecture layout.
 - YouTube-facing code is **selector- and DOM-structure sensitive**; coupling stays localized (e.g. per-module `selectors.ts`), and features must behave correctly when toggled off and on repeatedly.
 - Development uses Vite watch builds; after code changes, reload the unpacked extension in Chrome—expect **reload/rebuild**, not full hot reload of injected extension code like a normal web app.
-- **Icons:** SVG sources live in `icons/`; after changes, re-rasterize PNGs with **sharp** via `pnpx`.
+- **Icons:** SVG sources live in `icons/`; after changes, run **`pnpm icons`** to re-rasterize all PNGs (uses `icons/rasterize.mjs` with **sharp**).
 - **`not-interested`** (`src/modules/not-interested/`) adds a home-feed control that invokes YouTube **Not interested** through the overflow menu; **`watch-later-toggle`** is the reference pattern for comparable menu automation.
 - **`clean-sidebar`** (`src/modules/clean-sidebar/`) CSS-hides non-essential guide entries (e.g. Subscriptions, Shorts, Your channel/videos, More from YouTube).
 - Popup **module groups** live in **`src/framework/groups.ts`** (`moduleGroups` with id/name/description plus typed **`ModuleGroupId`**); modules opt in with **`FeatureModule.group`** matching a registry id (not ad hoc strings).

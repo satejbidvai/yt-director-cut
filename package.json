@@ -11,13 +11,15 @@
     "typecheck": "tsc --noEmit",
     "lint:dead-code": "fallow dead-code",
     "lint:health": "fallow health",
-    "lint:dupes": "fallow dupes"
+    "lint:dupes": "fallow dupes",
+    "icons": "node icons/rasterize.mjs"
   },
   "devDependencies": {
     "@crxjs/vite-plugin": "^2.0.0",
     "@types/chrome": "^0.0.268",
     "@types/node": "^25.6.0",
     "fallow": "^2.54.2",
+    "sharp": "^0.34.5",
     "typescript": "^5.5.0",
     "vite": "^5.4.0"
   }
