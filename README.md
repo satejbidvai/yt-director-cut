@@ -1,4 +1,4 @@
-# Redline
+# YouTube: Director's Cut
 
 A Chrome extension that fixes the small things YouTube won't.
 
@@ -34,15 +34,15 @@ Bolder, more readable captions with text shadow and a semi-transparent backgroun
 
 ## How it works
 
-YouTube is a single-page Polymer app — normal page-load events never fire on navigation. Watch Later has no public API (the Data API returns `playlistOperationUnsupported`). Redline works by listening to YouTube's internal navigation events and automating the native UI where needed.
+YouTube is a single-page Polymer app — normal page-load events never fire on navigation. Watch Later has no public API (the Data API returns `playlistOperationUnsupported`). Director's Cut works by listening to YouTube's internal navigation events and automating the native UI where needed.
 
 ## Install
 
 Requires [Node.js](https://nodejs.org/) and [pnpm](https://pnpm.io/).
 
 ```sh
-git clone https://github.com/user/redline.git
-cd redline
+git clone https://github.com/user/youtube-directors-cut.git
+cd youtube-directors-cut
 pnpm install
 pnpm build
 ```
@@ -58,7 +58,7 @@ Open any page on `www.youtube.com` — features are active by default and toggle
 
 ## Architecture
 
-Redline uses a lightweight module system. Each feature is a self-contained `FeatureModule`:
+Director's Cut uses a lightweight module system. Each feature is a self-contained `FeatureModule`:
 
 ```ts
 type FeatureModule = {

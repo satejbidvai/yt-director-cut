@@ -12,7 +12,7 @@
 import { createWarnOnceMiss } from '../../shared/logger';
 
 /** Warn once per key per session. Callers use this after a confirmed miss. */
-export const warnOnceMiss = createWarnOnceMiss('[redline:watch-later-toggle]');
+export const warnOnceMiss = createWarnOnceMiss('[ytdc:watch-later-toggle]');
 
 function findAll<T extends Element = Element>(root: ParentNode, selector: string): T[] {
   return Array.from(root.querySelectorAll<T>(selector));
@@ -31,7 +31,7 @@ export function findActionRow(root: ParentNode = document): Element | null {
 // --- WL playlist page selectors (/playlist?list=WL) ---
 
 export const PLAYLIST_ITEM_SELECTOR = 'ytd-playlist-video-renderer';
-export const WL_PROCESSED_ATTR = 'data-redline-wl-remove';
+export const WL_PROCESSED_ATTR = 'data-ytdc-wl-remove';
 
 /** The playlist contents container to observe for new items. */
 export function findWLPlaylistContainer(): Element | null {
@@ -87,7 +87,7 @@ export function findNotificationButton(root: ParentNode): Element | null {
 // --- Home feed selectors (pathname === '/') ---
 
 export const FEED_CARD_SELECTOR = 'ytd-rich-item-renderer';
-export const FEED_WL_PROCESSED_ATTR = 'data-redline-wl-feed';
+export const FEED_WL_PROCESSED_ATTR = 'data-ytdc-wl-feed';
 
 /** The home feed grid container to observe for new cards. */
 export function findFeedContainer(): Element | null {

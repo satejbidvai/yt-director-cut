@@ -3,7 +3,7 @@ import { findActionRow, warnOnceMiss } from './selectors';
 import { getWLIds, onWLChange } from '../../shared/wl-store';
 import { toggleWatchLater } from '../../shared/wl-toggle';
 
-const BUTTON_ID = 'redline-watch-later-button';
+const BUTTON_ID = 'ytdc-watch-later-button';
 const BUTTON_LABEL = 'Later';
 
 // margin-left:-6px matches YouTube's icon inset; margin-right:6px is the icon–text gap.

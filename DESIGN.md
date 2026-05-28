@@ -180,7 +180,7 @@ Flat. No shadows anywhere in the system. The popup uses a 1px border (`var(--bor
 - **Do** use the system font stack for all popup text. Roboto in the popup would feel foreign on macOS.
 - **Do** keep the accent red below 10% of any popup screen. Its rarity is what makes it signal.
 - **Do** use opacity and background-tint transitions for state changes. They're the only motion vocabulary in this system.
-- **Do** prefix injected element IDs with `redline-` to avoid collisions with YouTube's DOM.
+- **Do** prefix injected element IDs with `ytdc-` to avoid collisions with YouTube's DOM.
 - **Do** use `prefers-color-scheme` for popup theming. The user's OS choice is the decision.
 
 ### Don't:

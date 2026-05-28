@@ -1,4 +1,4 @@
-const STYLE_CLASS = "redline-styles";
+const STYLE_CLASS = "ytdc-styles";
 
 /**
  * Inject a CSS block into `<head>` via its own `<style>` element.

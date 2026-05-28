@@ -1,10 +1,10 @@
 {
   "manifest_version": 3,
-  "name": "Redline",
+  "name": "YouTube: Director's Cut",
   "version": "0.1.0",
   "description": "A better YouTube experience.",
   "action": {
-    "default_title": "Redline",
+    "default_title": "YouTube: Director's Cut",
     "default_popup": "src/popup/index.html",
     "default_icon": {
       "16": "icons/toolbar-16.png",

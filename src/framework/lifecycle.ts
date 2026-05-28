@@ -12,7 +12,7 @@ function buildContext(): { ctx: ModuleContext; teardown: () => void } {
       try {
         handler(new URL(location.href));
       } catch (err) {
-        console.warn('[redline] onNavigate first-run threw:', err);
+        console.warn('[ytdc] onNavigate first-run threw:', err);
       }
     }
   };
@@ -43,13 +43,13 @@ export async function bootstrap(modules: FeatureModule[]): Promise<void> {
     try {
       userCleanup = mod.enable(ctx);
     } catch (err) {
-      console.warn(`[redline] module ${mod.id} enable() threw:`, err);
+      console.warn(`[ytdc] module ${mod.id} enable() threw:`, err);
     }
     cleanups.set(mod.id, () => {
       try {
         userCleanup();
       } catch (err) {
-        console.warn(`[redline] module ${mod.id} cleanup threw:`, err);
+        console.warn(`[ytdc] module ${mod.id} cleanup threw:`, err);
       }
       teardown();
     });

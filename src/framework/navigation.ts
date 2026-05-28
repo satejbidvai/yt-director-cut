@@ -12,7 +12,7 @@ function ensureAttached(): void {
       try {
         h(url);
       } catch (err) {
-        console.warn("[redline] navigation handler threw:", err);
+        console.warn("[ytdc] navigation handler threw:", err);
       }
     }
   });

@@ -11,7 +11,7 @@ import {
   warnOnceMiss,
 } from './selectors';
 
-const BUTTON_CLASS = 'redline-wl-feed-btn';
+const BUTTON_CLASS = 'ytdc-wl-feed-btn';
 
 const BOOKMARK_OUTLINE_SVG = `<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24" fill="currentColor" aria-hidden="true"><path d="M19 2H5a2 2 0 00-2 2v16.887c0 1.266 1.382 2.048 2.469 1.399L12 18.366l6.531 3.919c1.087.652 2.469-.131 2.469-1.397V4a2 2 0 00-2-2ZM5 20.233V4h14v16.233l-6.485-3.89-.515-.309-.515.309L5 20.233Z"></path></svg>`;
 const BOOKMARK_FILLED_SVG = `<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24" fill="currentColor" aria-hidden="true"><path d="M19 2H5a2 2 0 00-2 2v16.887c0 1.266 1.382 2.048 2.469 1.399L12 18.366l6.531 3.919c1.087.652 2.469-.131 2.469-1.397V4a2 2 0 00-2-2Z"></path></svg>`;
@@ -20,7 +20,7 @@ export const homeFeedStyles = `
   [${FEED_WL_PROCESSED_ATTR}] .ytLockupMetadataViewModelTextContainer {
     padding-right: 36px;
   }
-  [${FEED_WL_PROCESSED_ATTR}][data-redline-ni] .ytLockupMetadataViewModelTextContainer {
+  [${FEED_WL_PROCESSED_ATTR}][data-ytdc-ni] .ytLockupMetadataViewModelTextContainer {
     padding-right: 66px;
   }
   ${overlayIcon.css(BUTTON_CLASS, FEED_CARD_SELECTOR)}
@@ -30,7 +30,7 @@ export const homeFeedStyles = `
     right: 52px;
   }
   /* When not-interested is absent, shift closer to the menu button. */
-  ${FEED_CARD_SELECTOR}:not([data-redline-ni]) .${BUTTON_CLASS} {
+  ${FEED_CARD_SELECTOR}:not([data-ytdc-ni]) .${BUTTON_CLASS} {
     right: 20px;
   }`;
 

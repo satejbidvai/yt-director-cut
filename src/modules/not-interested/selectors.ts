@@ -9,10 +9,10 @@
 
 import { createWarnOnceMiss } from '../../shared/logger';
 
-export const warnOnceMiss = createWarnOnceMiss('[redline:not-interested]');
+export const warnOnceMiss = createWarnOnceMiss('[ytdc:not-interested]');
 
 export const CARD_SELECTOR = 'ytd-rich-item-renderer';
-export const PROCESSED_ATTR = 'data-redline-ni';
+export const PROCESSED_ATTR = 'data-ytdc-ni';
 
 /** The feed grid container to observe for new cards. */
 export function findFeedContainer(): Element | null {
