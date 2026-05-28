@@ -28,7 +28,7 @@ export default defineConfig({
   plugins: [crxCorsPlugin(), crx({ manifest })],
   build: {
     target: "esnext",
-    sourcemap: true,
+    sourcemap: !!process.env.VITE_SOURCEMAP,
   },
   server: {
     port: 5173,

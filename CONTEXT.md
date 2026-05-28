@@ -3,8 +3,7 @@
 ## What this is
 
 A Manifest V3 Chrome extension for **desktop YouTube** (`www.youtube.com` only).
-It adds small productivity features via a pluggable module system. Sideload-only
-for now (no Chrome Web Store submission).
+It adds small productivity features via a pluggable module system.
 
 Current modules:
 
