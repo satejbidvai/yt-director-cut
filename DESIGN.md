@@ -1,5 +1,5 @@
 ---
-name: YouTube Extension
+name: "YouTube: Director's Cut"
 description: Sharp productivity features that disappear into YouTube's native surface.
 colors:
   accent: "#e5484d"
