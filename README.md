@@ -41,10 +41,10 @@ YouTube is a single-page Polymer app — normal page-load events never fire on n
 Requires [Node.js](https://nodejs.org/) and [pnpm](https://pnpm.io/).
 
 ```sh
-git clone https://github.com/user/youtube-directors-cut.git
-cd youtube-directors-cut
+git clone https://github.com/satejbidvai/yt-director-cut.git
+cd yt-director-cut
 pnpm install
-pnpm build
+pnpm build:prod
 ```
 
 Then load it into Chrome:
@@ -52,7 +52,7 @@ Then load it into Chrome:
 1. Open `chrome://extensions`
 2. Enable **Developer mode** (top-right toggle)
 3. Click **Load unpacked**
-4. Select the generated `dist/` folder
+4. Select the generated `dist-prod/` folder
 
 Open any page on `www.youtube.com` — features are active by default and toggleable from the toolbar popup.
 
