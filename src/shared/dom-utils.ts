@@ -1,3 +1,11 @@
+/** Returns true if the card is a promoted/ad slot that modules should skip. */
+export function isAdCard(card: Element): boolean {
+  return (
+    card.querySelector('ytd-ad-slot-renderer') !== null ||
+    card.querySelector('a[href*="googleadservices"]') !== null
+  );
+}
+
 /**
  * Wait for a node satisfying `predicate` to appear under `root`. Resolves with
  * the matching node or rejects after `timeoutMs`.

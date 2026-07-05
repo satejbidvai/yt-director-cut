@@ -1,7 +1,7 @@
 import type { FeatureModule } from '../../framework/types';
 import { overlayIcon } from '../../framework/styles';
 import { injectStyles } from '../../framework/style-injection';
-import { waitFor } from '../../shared/dom-utils';
+import { isAdCard, waitFor } from '../../shared/dom-utils';
 import { clickOverflowMenuItem } from '../../shared/overflow-menu';
 import {
   CARD_SELECTOR,
@@ -43,8 +43,7 @@ export const notInterestedModule: FeatureModule = {
       // Check for the actual button, not just the attribute — YouTube's SPA
       // rebuilds card internals on navigation while preserving the outer element.
       if (card.querySelector(`.${BUTTON_CLASS}`)) return;
-      if (card.querySelector('ytd-ad-slot-renderer')) return;
-      if (card.querySelector('a[href*="googleadservices"]')) return;
+      if (isAdCard(card)) return;
 
       const menuContainer = findCardMenuContainer(card);
       if (!menuContainer || !menuContainer.parentElement) return;

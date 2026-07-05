@@ -1,7 +1,7 @@
 import { overlayIcon } from '../../framework/styles';
 import { toggleWatchLater } from '../../shared/wl-toggle';
 import { getWLIds, onWLChange } from '../../shared/wl-store';
-import { waitFor } from '../../shared/dom-utils';
+import { isAdCard, waitFor } from '../../shared/dom-utils';
 import {
   FEED_CARD_SELECTOR,
   FEED_WL_PROCESSED_ATTR,
@@ -54,8 +54,7 @@ function updateButtonIcon(btn: HTMLButtonElement, isSaved: boolean): void {
 
 function processCard(card: Element): void {
   if (card.querySelector(`.${BUTTON_CLASS}`)) return;
-  if (card.querySelector('ytd-ad-slot-renderer')) return;
-  if (card.querySelector('a[href*="googleadservices"]')) return;
+  if (isAdCard(card)) return;
 
   const menuContainer = findCardMenuContainer(card);
   if (!menuContainer || !menuContainer.parentElement) return;
