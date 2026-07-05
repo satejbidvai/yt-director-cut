@@ -22,7 +22,7 @@ export const headerLinkStyles = `
     text-decoration: none;
   }
   html[dark] .${LINK_CLASS} {
-    color: #f1f1f1;
+    color: #ffffff;
   }
   .${LINK_CLASS}:hover {
     background: rgba(0, 0, 0, 0.1);
@@ -62,9 +62,7 @@ function insertLink(container: HTMLElement): void {
  * YouTube's Polymer re-stamps the #buttons container on SPA navigations,
  * so a one-shot injection isn't enough.
  */
-export async function injectHeaderLink(
-  isCancelled: () => boolean,
-): Promise<void> {
+export async function injectHeaderLink(isCancelled: () => boolean): Promise<void> {
   cleanupHeaderLink();
 
   let container: HTMLElement;
@@ -79,7 +77,10 @@ export async function injectHeaderLink(
   insertLink(container);
 
   observer = new MutationObserver(() => {
-    if (isCancelled()) { cleanupHeaderLink(); return; }
+    if (isCancelled()) {
+      cleanupHeaderLink();
+      return;
+    }
     insertLink(container);
   });
   observer.observe(container, { childList: true });

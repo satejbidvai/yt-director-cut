@@ -29,13 +29,13 @@ export const notInterestedModule: FeatureModule = {
 
     const disposeStyles = injectStyles(`
       [${PROCESSED_ATTR}] .ytLockupMetadataViewModelTextContainer {
-        padding-right: 36px;
+        padding-right: 40px;
       }
       ${overlayIcon.css(BUTTON_CLASS, CARD_SELECTOR)}
       .${BUTTON_CLASS} {
         position: absolute;
         top: -6px;
-        right: 20px;
+        right: 24px;
       }
     `);
 

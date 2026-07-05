@@ -8,13 +8,13 @@ export const yt = {
 
 /** Spacing / sizing values shared across YouTube-embedded UI. */
 export const pill = {
-  height:       "36px",
+  height:       "40px",
   paddingX:     "16px",
-  borderRadius: "18px",
-  font:         `500 14px/36px ${yt.fontFamily}`,
+  borderRadius: "20px",
+  font:         `500 14px/40px ${yt.fontFamily}`,
 } as const;
 
-/** 36 × 36 round icon button that reveals on parent hover. */
+/** 40 × 40 round icon button that reveals on parent hover. */
 export const overlayIcon = {
   css(className: string, hoverParent: string): string {
     return `
@@ -22,11 +22,11 @@ export const overlayIcon = {
         display: flex;
         align-items: center;
         justify-content: center;
-        width: 36px;
-        height: 36px;
+        width: 40px;
+        height: 40px;
         padding: 0;
         border: none;
-        border-radius: 18px;
+        border-radius: 20px;
         background: transparent;
         color: var(--yt-spec-text-primary, rgb(241, 241, 241));
         cursor: pointer;
@@ -41,8 +41,8 @@ export const overlayIcon = {
         background: ${yt.chipBg};
       }
       .${className} svg {
-        width: 20px;
-        height: 20px;
+        width: 24px;
+        height: 24px;
       }`;
   },
 } as const;

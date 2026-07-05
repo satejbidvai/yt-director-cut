@@ -18,20 +18,20 @@ const BOOKMARK_FILLED_SVG = `<svg xmlns="http://www.w3.org/2000/svg" height="24"
 
 export const homeFeedStyles = `
   [${FEED_WL_PROCESSED_ATTR}] .ytLockupMetadataViewModelTextContainer {
-    padding-right: 36px;
+    padding-right: 40px;
   }
   [${FEED_WL_PROCESSED_ATTR}][data-ytdc-ni] .ytLockupMetadataViewModelTextContainer {
-    padding-right: 66px;
+    padding-right: 76px;
   }
   ${overlayIcon.css(BUTTON_CLASS, FEED_CARD_SELECTOR)}
   .${BUTTON_CLASS} {
     position: absolute;
     top: -6px;
-    right: 52px;
+    right: 60px;
   }
   /* When not-interested is absent, shift closer to the menu button. */
   ${FEED_CARD_SELECTOR}:not([data-ytdc-ni]) .${BUTTON_CLASS} {
-    right: 20px;
+    right: 24px;
   }`;
 
 let observer: MutationObserver | null = null;
