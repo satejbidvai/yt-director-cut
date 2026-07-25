@@ -5,6 +5,7 @@ import { hidePlaylistFeedModule } from "../modules/hide-playlist-feed";
 import { notInterestedModule } from "../modules/not-interested";
 import { hideMixesModule } from "../modules/hide-mixes";
 import { cleanSidebarModule } from "../modules/clean-sidebar";
+import { quietDownloadsModule } from "../modules/quiet-downloads";
 
 export const modules: FeatureModule[] = [
   watchLaterToggleModule,
@@ -13,6 +14,7 @@ export const modules: FeatureModule[] = [
   notInterestedModule,
   hideMixesModule,
   cleanSidebarModule,
+  quietDownloadsModule,
 ];
 
 const seen = new Set<string>();
