@@ -1,4 +1,4 @@
-export type ModuleGroup = {
+type ModuleGroup = {
   id: string;
   name: string;
   description: string;
@@ -6,10 +6,10 @@ export type ModuleGroup = {
 
 export const moduleGroups = [
   {
-    id: "minimalist-yt",
-    name: "Minimalist YouTube",
-    description: "Strip away distractions from your feed",
-  },
+    id: 'minimalist-yt',
+    name: 'Minimalist YouTube',
+    description: 'Strip away distractions from your feed'
+  }
 ] as const satisfies readonly ModuleGroup[];
 
-export type ModuleGroupId = (typeof moduleGroups)[number]["id"];
+export type ModuleGroupId = (typeof moduleGroups)[number]['id'];
