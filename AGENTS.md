@@ -22,5 +22,6 @@
 - **`clean-sidebar`** (`src/modules/clean-sidebar/`) CSS-hides non-essential guide entries (e.g. Subscriptions, Shorts, Your channel/videos, More from YouTube).
 - Popup **module groups** live in **`src/framework/groups.ts`** (`moduleGroups` with id/name/description plus typed **`ModuleGroupId`**); modules opt in with **`FeatureModule.group`** matching a registry id (not ad hoc strings).
 - **`pnpm build:prod`** outputs to **`dist-prod/`** so a production unpacked load can sit beside **`pnpm dev`**, which uses **`dist/`** (CRXJS otherwise overwrites the same output folder depending on which command ran last).
+- During development and testing, rely on **`pnpm dev`** (Vite watch mode); **never** run `pnpm build:prod` just to test changes—it is only for producing the final production artifact.
 - Default MV3 content scripts run in an **isolated world**: page JS globals like **`ytcfg` are not available** to the extension; derive InnerTube/bootstrap values from **DOM-visible inline scripts** (e.g. `ytcfg.set` payloads), not `ytcfg.get()` from the content script.
 - When **`yt-navigate-finish`** fires before the needed subtree exists, **`waitFor`** in **`src/shared/dom-utils.ts`** is the standard bounded wait (avoid a single synchronous `querySelector` miss on home feed, WL playlist, etc.).

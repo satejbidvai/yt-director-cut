@@ -1,7 +1,7 @@
 /** YouTube CSS custom-property references with fallbacks. */
 export const yt = {
   chipBg:      "var(--yt-spec-badge-chip-background, rgba(255,255,255,0.1))",
-  chipBgHover: "var(--yt-spec-badge-chip-background-hover, rgba(255,255,255,0.2))",
+  chipBgHover: "rgba(255,255,255,0.2)",
   textPrimary: "var(--yt-spec-text-primary, inherit)",
   fontFamily:  "Roboto, Arial, sans-serif",
 } as const;
@@ -38,7 +38,7 @@ export const overlayIcon = {
         opacity: 1;
       }
       .${className}:hover {
-        background: ${yt.chipBg};
+        background: ${yt.chipBgHover};
       }
       .${className} svg {
         width: 24px;
