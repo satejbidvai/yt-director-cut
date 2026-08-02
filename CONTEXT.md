@@ -127,24 +127,28 @@ Load `dist/` as an unpacked extension in `chrome://extensions`.
 
 ## Styling
 
-Two injection patterns, two strategies:
+Core principle: **inherit native styles by cloning, don't replicate them.**
 
-- **Embedded UI** (e.g. buttons inside YouTube's action row): inline styles
-  composed from shared tokens in `framework/styles.ts`. Shadow DOM is not used
-  here — it would break YouTube's flex layout and look foreign.
+- **Embedded UI** (e.g. buttons inside YouTube's action row): clone a native
+  sibling element, replace only the icon and label. The clone carries all of
+  YouTube's current styles, classes, and interaction elements automatically.
+  Shadow DOM is not used here — it would break YouTube's flex layout.
+- **Overlay UI** (reveal-on-hover icon buttons on feed cards, playlist items):
+  custom CSS via `shared/overlay-icon.ts`. These buttons use a stable minimal
+  style (40px circle, opacity transition) that doesn't track native appearance.
 - **Standalone UI** (overlays, panels, sidebars): use Shadow DOM for full CSS
   isolation. No helper exists yet — build one when the first module needs it.
 
 Shared infrastructure:
 
-- **`framework/styles.ts`** — single source of YouTube CSS variable references
-  (`yt.chipBg`, `yt.textPrimary`, etc.) and pill sizing constants. Modules
-  import tokens and compose their own inline styles.
+- **`shared/clone-button.ts`** — `cloneNativeButton(container, selector)`
+  deep-clones a template element and strips IDs. Modules then replace icon/
+  label by content (find SVG, find text node by its known value), not by class.
+- **`shared/overlay-icon.ts`** — CSS generator for 40×40 reveal-on-hover icon
+  buttons used in feed cards and playlist items.
 - **`framework/style-injection.ts`** — `injectStyles(css)` appends CSS to a
-  shared `<style class="ytdc-styles">` element and returns a dispose
-  function. Use for pseudo-class rules (`:hover`, `:disabled`) that inline
-  styles cannot express. The `<style>` element is lazily created and removed
-  when the last consumer disposes.
+  `<style class="ytdc-styles">` element and returns a dispose function. Used
+  for overlay positioning and hover-reveal rules.
 - **Selector convention:** `#ytdc-*` IDs for unique injected elements.
   No additional prefixing scheme is needed.
 

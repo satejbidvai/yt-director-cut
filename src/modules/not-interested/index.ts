@@ -1,5 +1,5 @@
 import type { FeatureModule } from '../../framework/types';
-import { overlayIcon } from '../../framework/styles';
+import { overlayIcon } from '../../shared/overlay-icon';
 import { injectStyles } from '../../framework/style-injection';
 import { isAdCard, waitFor } from '../../shared/dom-utils';
 import { clickOverflowMenuItem } from '../../shared/overflow-menu';

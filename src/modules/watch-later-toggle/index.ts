@@ -1,6 +1,6 @@
 import type { FeatureModule } from '../../framework/types';
 import { injectStyles } from '../../framework/style-injection';
-import { injectButton, removeInjectedButton, watchPageStyles } from './watch-page';
+import { injectButton, removeInjectedButton } from './watch-page';
 import { startWLObserver, cleanupWLButtons, playlistRemoveStyles } from './playlist-remove';
 import { startHomeFeedObserver, cleanupHomeFeedButtons, homeFeedStyles } from './home-feed';
 import { injectHeaderLink, cleanupHeaderLink, headerLinkStyles } from './header-link';
@@ -14,7 +14,7 @@ export const watchLaterToggleModule: FeatureModule = {
     let cleanupFullscreenListener: (() => void) | null = null;
 
     const disposeStyles = injectStyles(
-      watchPageStyles + playlistRemoveStyles + homeFeedStyles + headerLinkStyles,
+      playlistRemoveStyles + homeFeedStyles + headerLinkStyles,
     );
 
     void injectHeaderLink(() => cancelled);

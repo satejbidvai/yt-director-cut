@@ -1,4 +1,4 @@
-import { overlayIcon } from '../../framework/styles';
+import { overlayIcon } from '../../shared/overlay-icon';
 import { toggleWatchLater } from '../../shared/wl-toggle';
 import { getWLIds, onWLChange } from '../../shared/wl-store';
 import { isAdCard, waitFor } from '../../shared/dom-utils';

@@ -1,4 +1,4 @@
-import { overlayIcon } from '../../framework/styles';
+import { overlayIcon } from '../../shared/overlay-icon';
 import { waitFor } from '../../shared/dom-utils';
 import { clickOverflowMenuItem } from '../../shared/overflow-menu';
 import {
