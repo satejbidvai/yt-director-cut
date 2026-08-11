@@ -37,11 +37,14 @@ export const hidePlaylistFeedModule: FeatureModule = {
     ctx.onNavigate((url) => {
       if (url.pathname !== '/') return;
 
-      if (fetched) {
-        void getWLIds().then(applyCSS);
-      } else {
+      // Apply the last-known cache immediately, so saved videos are hidden on
+      // the first paint. This survives a failed fetch — the cache stays applied.
+      void getWLIds().then(applyCSS);
+
+      // Refresh from InnerTube once per session. A successful fetch writes to
+      // storage, which fires onWLChange → applyCSS to refine the cached result.
+      if (!fetched) {
         fetched = true;
-        // Fetch triggers a storage write which fires onWLChange → applyCSS
         void fetchAndCacheWLIds();
       }
     });
