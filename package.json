@@ -1,7 +1,7 @@
 {
   "name": "youtube-directors-cut",
   "version": "0.1.0",
-  "description": "One-click Watch Later, cleaner feeds, styled captions, and more.",
+  "description": "One-click Watch Later, a cleaner home feed, and readable captions for desktop YouTube.",
   "type": "module",
   "private": true,
   "scripts": {

@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "YouTube: Director's Cut",
   "version": "0.1.0",
-  "description": "One-click Watch Later, cleaner feeds, styled captions, and more.",
+  "description": "One-click Watch Later, a cleaner home feed, and readable captions for desktop YouTube.",
   "action": {
     "default_title": "YouTube: Director's Cut",
     "default_popup": "src/popup/index.html",

@@ -1,6 +1,6 @@
 ---
 name: "YouTube: Director's Cut"
-description: Sharp productivity features that disappear into YouTube's native surface.
+description: Productivity tweaks for desktop YouTube that look like they shipped with the site.
 colors:
   accent: "#e5484d"
   surface-light: "#ffffff"
@@ -78,13 +78,13 @@ components:
 
 ## 1. Overview
 
-**Creative North Star: "The Pit Crew"**
+**Design metaphor: "The Pit Crew"**
 
-Fast, practiced, in-and-out before you notice. Every feature exists to remove friction from YouTube, not to announce itself. The visual system has two distinct layers: the **popup** (an owned settings surface using system fonts and the extension's own tokens) and **YouTube-embedded UI** (injected elements that borrow YouTube's CSS custom properties and mimic native controls). These layers never cross; the popup never looks like YouTube, and injected UI never looks like the popup.
+Fast, practiced, done before you notice. Features remove friction; they do not announce themselves. Two visual layers stay separate: the **popup** (our settings panel, system fonts, extension tokens) and **YouTube-embedded UI** (injected controls that borrow `--yt-spec-*` variables and match native buttons). The popup never looks like YouTube. Injected UI never looks like the popup.
 
-The extension ships opinionated defaults and minimal configuration. A toggle is the most complex control any module needs. If a feature can't render, it shows nothing rather than a broken state. The visual language follows YouTube's lead inside the page and stays restrained in the popup.
+Defaults are opinionated. Configuration stays minimal. A toggle is the most complex control any module needs. If a feature cannot render, it shows nothing. Inside the page, we follow YouTube's lead. In the popup, we stay restrained.
 
-**Key Characteristics:**
+**Key characteristics**
 - Two-layer visual system: popup tokens vs YouTube's `--yt-spec-*` variables
 - System font stack throughout the popup; Roboto (YouTube's font) for injected UI
 - Single accent color used sparingly: toggle on-state and the wordmark highlight
@@ -118,7 +118,7 @@ A restrained palette: tinted neutrals plus one accent at less than 10% surface a
 **Popup Font:** System stack (`-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif`)
 **YouTube-Embedded Font:** `Roboto, Arial, sans-serif` (YouTube's own stack)
 
-**Character:** Platform-native and invisible. The popup uses the OS system font so it feels like a first-party settings panel, not a themed overlay. Injected YouTube UI uses Roboto because YouTube uses Roboto.
+The popup uses the OS system font so it reads like a first-party settings panel, not a themed overlay. Injected YouTube UI uses Roboto because YouTube uses Roboto.
 
 ### Hierarchy
 - **Title** (600, 16px, 1.3, -0.01em tracking): Popup header wordmark only.
@@ -185,7 +185,7 @@ Flat. No shadows anywhere in the system. The popup uses a 1px border (`var(--bor
 
 ### Don't:
 - **Don't** bring the popup's accent color into YouTube's page. The extension's red and YouTube's red are different systems.
-- **Don't** add shadows, gradients, or blur effects. The system is flat by doctrine, not by oversight.
+- **Don't** add shadows, gradients, or blur effects. The system is flat on purpose.
 - **Don't** use bounce or elastic easing. Transitions are `ease-out` or `ease`, 120-200ms.
 - **Don't** build settings pages, option tabs, or preference panels. A toggle per module is the ceiling. (Anti-reference: bloated extensions with 50 settings.)
 - **Don't** add gamification patterns: streaks, badges, progress bars, achievement unlocks.

@@ -8,7 +8,7 @@ export const moduleGroups = [
   {
     id: 'minimalist-yt',
     name: 'Minimalist YouTube',
-    description: 'Strip away distractions from your feed'
+    description: 'Less clutter in the sidebar, feed, and downloads'
   }
 ] as const satisfies readonly ModuleGroup[];
 

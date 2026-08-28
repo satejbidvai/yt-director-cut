@@ -1,40 +1,40 @@
 # YouTube: Director's Cut
 
-A Chrome extension that fixes the small things YouTube won't.
+A Chrome extension for the small fixes YouTube keeps skipping.
 
 <!-- TODO: hero GIF showing the popup + a feature in action -->
 
 ## Features
 
-Every feature can be toggled independently from the extension popup.
+Every feature toggles on or off from the extension popup.
 
 ### Watch Later Toggle
 
-One-click add/remove from the watch page — no menu diving, no playlist panel.
+Add or remove from Watch Later on the watch page in one click. No overflow menu, no playlist panel.
 
 <!-- TODO: GIF -->
 
 ### Hide Already-Saved Videos
 
-Videos already in your Watch Later playlist are automatically hidden from the home feed.
+Videos already in Watch Later stay off your home feed.
 
 <!-- TODO: GIF -->
 
 ### Not Interested
 
-A single button on every home feed card to trigger "Not interested" instantly — no right-click, no overflow menu.
+One button on every home feed card. No right-click, no three-dot menu.
 
 <!-- TODO: GIF -->
 
 ### Caption Style
 
-Bolder, more readable captions with text shadow and a semi-transparent background. Sized appropriately for feed previews vs. the watch page.
+Bolder captions with text shadow and a semi-transparent background. Smaller on feed previews, larger on the watch page.
 
 <!-- TODO: GIF -->
 
 ## How it works
 
-YouTube is a single-page Polymer app — normal page-load events never fire on navigation. Watch Later has no public API (the Data API returns `playlistOperationUnsupported`). Director's Cut works by listening to YouTube's internal navigation events and automating the native UI where needed.
+YouTube is a single-page Polymer app. Normal page loads do not run when you navigate between pages. Watch Later has no public API (the Data API returns `playlistOperationUnsupported`). Director's Cut listens for YouTube's internal navigation events and drives the native UI where it has to.
 
 ## Install
 
@@ -54,7 +54,7 @@ Then load it into Chrome:
 3. Click **Load unpacked**
 4. Select the generated `dist-prod/` folder
 
-Open any page on `www.youtube.com` — features are active by default and toggleable from the toolbar popup.
+Open any page on `www.youtube.com`. Features are on by default. Toggle them from the toolbar popup.
 
 ## Architecture
 
@@ -73,27 +73,27 @@ type ModuleContext = {
 };
 ```
 
-`enable()` receives a context and returns a cleanup function. The framework calls cleanup when the feature is toggled off — all teardown is co-located with setup.
+`enable()` receives a context and returns a cleanup function. The framework calls cleanup when you turn a feature off, so setup and teardown stay together.
 
 ```
 src/
-  content.ts              — entry point, bootstraps all modules
-  background.ts           — service worker (MV3 requirement, currently a stub)
+  content.ts              entry point, bootstraps all modules
+  background.ts           service worker (MV3 requirement, currently a stub)
   framework/
-    types.ts              — FeatureModule, ModuleContext interfaces
-    registry.ts           — static module list (asserts unique IDs)
-    lifecycle.ts          — bootstrap, per-module context, toggle reactions
-    navigation.ts         — single yt-navigate-finish dispatcher
-    storage.ts            — chrome.storage.sync read/write/subscribe
-    styles.ts             — shared YouTube CSS variable tokens
-    style-injection.ts    — managed <style> injection with dispose
+    types.ts              FeatureModule, ModuleContext interfaces
+    registry.ts           static module list (asserts unique IDs)
+    lifecycle.ts          bootstrap, per-module context, toggle reactions
+    navigation.ts         single yt-navigate-finish dispatcher
+    storage.ts            chrome.storage.sync read/write/subscribe
+    styles.ts             shared YouTube CSS variable tokens
+    style-injection.ts    managed <style> injection with dispose
   modules/
-    watch-later-toggle/   — watch page pill + playlist page remove buttons
-    caption-style/        — pure CSS caption restyling
-    hide-playlist-feed/   — hides already-saved videos from home feed
-    not-interested/       — one-click "Not interested" on feed cards
-  shared/                 — cross-module helpers (WL store, overflow menu, etc.)
-  popup/                  — toolbar popup UI (one toggle per feature)
+    watch-later-toggle/   watch page pill + playlist page remove buttons
+    caption-style/        pure CSS caption restyling
+    hide-playlist-feed/   hides already-saved videos from home feed
+    not-interested/       one-click "Not interested" on feed cards
+  shared/                 cross-module helpers (WL store, overflow menu, etc.)
+  popup/                  toolbar popup UI (one toggle per feature)
 ```
 
-For deeper context on YouTube's SPA behavior, selector strategy, and module internals, see [CONTEXT.md](./CONTEXT.md).
+For YouTube SPA behavior, selector strategy, and module internals, see [CONTEXT.md](./CONTEXT.md).
