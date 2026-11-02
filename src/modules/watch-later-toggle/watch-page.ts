@@ -2,9 +2,10 @@ import { cloneNativeButton } from '../../shared/clone-button';
 import { findActionRow, warnOnceMiss } from './selectors';
 import { getWLIds, onWLChange } from '../../shared/wl-store';
 import { toggleWatchLater } from '../../shared/wl-toggle';
+import { attachTooltip } from '../../shared/tooltip';
 
 const BUTTON_ID = 'ytdc-watch-later-button';
-const BUTTON_LABEL = 'Later';
+const TOOLTIP_TEXT = 'Watch later';
 
 const ICON_STYLE = 'pointer-events:none;display:inherit;width:100%;height:100%';
 const CLOCK_OUTLINE_PATH = 'M12 1C5.925 1 1 5.925 1 12s4.925 11 11 11 11-4.925 11-11S18.075 1 12 1Zm0 2a9 9 0 110 18.001A9 9 0 0112 3Zm0 3a1 1 0 00-1 1v5.565l.485.292 3.33 2a1 1 0 001.03-1.714L13 11.435V7a1 1 0 00-1-1Z';
@@ -70,8 +71,9 @@ export async function injectButton(isCancelled: () => boolean): Promise<void> {
 }
 
 /**
- * Wait for #flexible-item-buttons to exist, have children, and stop receiving
- * DOM mutations for a debounce window — meaning YouTube is done re-stamping.
+ * Wait for #flexible-item-buttons to contain the template button with its icon,
+ * and stop receiving DOM mutations for a debounce window — meaning YouTube is
+ * done re-stamping. The icon can render after the button on a cold load.
  */
 function waitForStableFlexContainer(): Promise<Element | null> {
   const DEBOUNCE_MS = 300;
@@ -95,7 +97,7 @@ function waitForStableFlexContainer(): Promise<Element | null> {
     function tryResolve() {
       const row = findActionRow();
       const fc = row?.querySelector<Element>('#flexible-item-buttons');
-      if (fc && fc.children.length > 0) {
+      if (fc?.querySelector(`${TEMPLATE_BUTTON_SELECTOR} svg`)) {
         if (debounceTimer) clearTimeout(debounceTimer);
         debounceTimer = setTimeout(() => {
           cleanup();
@@ -123,19 +125,9 @@ function buildClonedButton(flexContainer: Element): HTMLElement | null {
   const innerButton = clone.querySelector<HTMLButtonElement>('button');
   if (!innerButton) return null;
 
-  // Find the label text node — match the original text to verify structure.
-  const originalLabel = innerButton.textContent?.trim();
-  if (!originalLabel) return null;
-
-  const labelNode = findTextNode(innerButton, originalLabel);
-  if (!labelNode) return null;
-
   // Find the icon SVG inside the aria-hidden icon container.
   const iconContainer = innerButton.querySelector<HTMLElement>('[aria-hidden="true"] svg');
   if (!iconContainer) return null;
-
-  // Replace label
-  labelNode.textContent = BUTTON_LABEL;
 
   // Replace icon SVG — the wrapper div provides fill:currentcolor and sizing.
   const temp = document.createElement('template');
@@ -146,6 +138,7 @@ function buildClonedButton(flexContainer: Element): HTMLElement | null {
   clone.id = BUTTON_ID;
   innerButton.setAttribute('aria-label', 'Toggle Watch Later for this video');
   innerButton.removeAttribute('title');
+  attachTooltip(innerButton, TOOLTIP_TEXT);
 
   // Use aria-disabled for disabled state (matches YouTube's pattern).
   innerButton.addEventListener('click', (ev) => {
@@ -159,17 +152,6 @@ function buildClonedButton(flexContainer: Element): HTMLElement | null {
   });
 
   return clone;
-}
-
-function findTextNode(root: HTMLElement, expectedText: string): Text | null {
-  const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
-  let node: Text | null;
-  while ((node = walker.nextNode() as Text | null)) {
-    if (node.textContent?.trim() === expectedText) {
-      return node;
-    }
-  }
-  return null;
 }
 
 function updateIcon(element: HTMLElement, isSaved: boolean): void {

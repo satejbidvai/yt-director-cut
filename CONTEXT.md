@@ -7,7 +7,7 @@ It adds small productivity features via a pluggable module system.
 
 Current modules:
 
-- **Watch Later toggle** — a one-click pill button in the watch-page action row
+- **Watch Later toggle** — a one-click icon button in the watch-page action row
   that adds/removes the current video from the user's Watch Later playlist.
 - **Caption Style** — opinionated caption styling (bold, text shadow, rounded
   semi-transparent background). Context-aware font sizing: smaller for feed
@@ -119,8 +119,12 @@ Load `dist/` as an unpacked extension in `chrome://extensions`.
 - **Permissions:** `storage` + `host_permissions: *://www.youtube.com/*`. No
   `tabs`, `activeTab`, or `scripting`.
 - **No `m.youtube.com`** — different DOM, out of scope.
-- **No state-aware button label.** The Watch Later button always reads
-  "Watch Later" (neutral toggle). YouTube's checkbox is itself a toggle, so
+- **Action-row buttons are icon-only** (as of late 2026). They have no text
+  label. YouTube shows the label in a shared `yt-tooltip` that it controls
+  from page-world JS, so the content script cannot use it. The Watch Later
+  button shows its own tooltip through `shared/tooltip.ts`.
+- **No state-aware tooltip.** The Watch Later tooltip always reads
+  "Watch later" (neutral toggle). YouTube's checkbox is itself a toggle, so
   one click correctly adds or removes regardless of prior state.
 - **Selector misses are silent in UI.** On failure, `warnOnceMiss()` logs a
   `console.warn` once per session and the module renders nothing.
@@ -130,7 +134,7 @@ Load `dist/` as an unpacked extension in `chrome://extensions`.
 Core principle: **inherit native styles by cloning, don't replicate them.**
 
 - **Embedded UI** (e.g. buttons inside YouTube's action row): clone a native
-  sibling element, replace only the icon and label. The clone carries all of
+  sibling element, replace only the icon. The clone carries all of
   YouTube's current styles, classes, and interaction elements automatically.
   Shadow DOM is not used here — it would break YouTube's flex layout.
 - **Overlay UI** (reveal-on-hover icon buttons on feed cards, playlist items):
@@ -142,8 +146,11 @@ Core principle: **inherit native styles by cloning, don't replicate them.**
 Shared infrastructure:
 
 - **`shared/clone-button.ts`** — `cloneNativeButton(container, selector)`
-  deep-clones a template element and strips IDs. Modules then replace icon/
-  label by content (find SVG, find text node by its known value), not by class.
+  deep-clones a template element and strips IDs. Modules then replace the
+  icon by content (find the SVG), not by class.
+- **`shared/tooltip.ts`** — `attachTooltip(trigger, text)` shows a hover
+  tooltip with YouTube's own tooltip classes, so it matches the native
+  tooltip style, position, and fade animations.
 - **`shared/overlay-icon.ts`** — CSS generator for 40×40 reveal-on-hover icon
   buttons used in feed cards and playlist items.
 - **`framework/style-injection.ts`** — `injectStyles(css)` appends CSS to a
